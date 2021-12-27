@@ -1,8 +1,6 @@
 package com.example.glitsapp20;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -13,26 +11,11 @@ import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.location.Location;
 
-import android.location.LocationProvider;
 import android.os.Bundle;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
-import android.graphics.Camera;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.util.JsonWriter;
 import android.util.Log;
-import android.util.LogPrinter;
-import android.webkit.PermissionRequest;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.Api;
-import com.google.android.gms.common.api.GoogleApi;
-import com.google.android.gms.common.internal.ICancelToken;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -45,29 +28,19 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.maps.LocationSource;
-import com.google.android.gms.tasks.CancellationToken;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnTokenCanceledListener;
 import com.google.android.gms.tasks.Task;
-import com.google.maps.android.data.geojson.GeoJsonLayer;
-import com.google.maps.android.data.kml.KmlLayer;
 
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xmlpull.v1.XmlPullParserException;
 
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.security.Permission;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class MapsActivity extends FragmentActivity
@@ -79,7 +52,7 @@ public class MapsActivity extends FragmentActivity
         GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMapLongClickListener,
         ActivityCompat.OnRequestPermissionsResultCallback,
-        GoogleMap.OnMyLocationClickListener {
+        GoogleMap.OnMyLocationClickListener{
 
     private GoogleMap mMap;
     ArrayList<String> pathNames = new ArrayList<>();
@@ -97,6 +70,13 @@ public class MapsActivity extends FragmentActivity
     public int pathSelected = -1;
     private Location lastKnownLocation;
     private FusedLocationProviderClient fusedLocationClient;
+    private boolean locBut = true;
+    private int test = 0;
+    private LatLng userPosition;
+    private LatLng newPosition;
+    private int icon = 0;
+    private double minLocDist = 0.01;
+    private boolean success = false;
 
     LatLng apanoMeria = new LatLng(37.49913, 24.907264);
     LatLng cameraPosition = apanoMeria;
@@ -201,6 +181,7 @@ public class MapsActivity extends FragmentActivity
     @Override
     public void onCameraMove() {
         zoomRethink();
+        updateLocateIcon();
     }
 
     @Override
@@ -217,7 +198,12 @@ public class MapsActivity extends FragmentActivity
 
     @Override
     public boolean onMyLocationButtonClick() {
-        return false;
+        locBut = false;
+            if(getDistance(userPosition, newPosition)<minLocDist){
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(apanoMeria,13));
+                locBut = true;
+            }
+        return locBut;
     }
 
     @Override
@@ -229,7 +215,6 @@ public class MapsActivity extends FragmentActivity
     public void onMapLongClick(@NonNull LatLng latLng) {
 
     }
-
 
     // LOCATION //
 
@@ -246,11 +231,12 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
-    private void getDeviceLocation() {
+    private boolean getDeviceLocation() {
         /*
          * Get the best and most recent location of the device, which may be null in rare
          * cases when a location is not available.
          */
+        success = false;
         try {
             if (locationPermissionsGranted) {
                 Task<Location> locationResult = fusedLocationClient.getLastLocation();
@@ -263,13 +249,17 @@ public class MapsActivity extends FragmentActivity
                                     lastKnownLocation.getLongitude() < 24.946950 && lastKnownLocation.getLongitude() > 24.875893) {
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()), (float) 14.7));
                             }
+                            success = true;
+                            userPosition = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
                         }
                     }
                 });
             }
+
         } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage(), e);
         }
+        return success;
     }
 
 
@@ -432,5 +422,23 @@ public class MapsActivity extends FragmentActivity
                 .newInstance(true).show(getSupportFragmentManager(), "dialog");
     }
 
+    private double getDistance(LatLng a, LatLng b){
+        return Math.hypot(Math.abs(a.longitude-b.longitude),Math.abs(a.latitude-b.latitude));
+    }
 
+    private void updateLocateIcon() {
+        newPosition = mMap.getCameraPosition().target;
+        if(locationPermissionsGranted && getDeviceLocation()) {
+            if (icon == 0) {
+                if (getDistance(userPosition, newPosition) < minLocDist) {
+                    //TODO - CHANGE LOCATE USER ICON TO APANO MERIA ICON
+                }
+            } else {
+                if (getDistance(userPosition, newPosition) > minLocDist) {
+                    //TODO - CHANGE APANO MERIA ICON LOCATE USER ICON
+                }
+            }
+        }
+        else{userPosition = newPosition;}
+    }
 }
