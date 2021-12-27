@@ -15,7 +15,7 @@ import android.widget.Toast;
 /**
  * Utility class for access to runtime permissions.
  */
-public abstract class PermissionUtils {
+public class PermissionUtils {
 
     /**
      * Requests the fine location permission. If a rationale with an additional explanation should
@@ -49,6 +49,7 @@ public abstract class PermissionUtils {
         }
         return false;
     }
+
 
     /**
      * A dialog that displays a permission denied message.
@@ -164,5 +165,8 @@ public abstract class PermissionUtils {
                 getActivity().finish();
             }
         }
+
+
     }
+
 }

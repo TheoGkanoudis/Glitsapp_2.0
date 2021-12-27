@@ -130,8 +130,6 @@ public class MapsActivity extends FragmentActivity
             Toast.makeText(this, "idk", Toast.LENGTH_SHORT).show();
         }
 
-
-
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -142,7 +140,6 @@ public class MapsActivity extends FragmentActivity
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -180,12 +177,13 @@ public class MapsActivity extends FragmentActivity
         }
         super.onSaveInstanceState(outState);
     }
+
     //map
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraPosition,13));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraPosition, 13));
         mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
         mMap.setOnCameraMoveListener(this);
         mMap.setOnPolylineClickListener(this);
@@ -201,8 +199,7 @@ public class MapsActivity extends FragmentActivity
     }
 
     @Override
-    public void onCameraMove()
-    {
+    public void onCameraMove() {
         zoomRethink();
     }
 
@@ -213,7 +210,9 @@ public class MapsActivity extends FragmentActivity
 
     @Override
     public void onMapClick(@NonNull LatLng latLng) {
-        if(pathSelected>=0){pathRethink(polylines.get(pathSelected));}
+        if (pathSelected >= 0) {
+            pathRethink(polylines.get(pathSelected));
+        }
     }
 
     @Override
@@ -234,12 +233,12 @@ public class MapsActivity extends FragmentActivity
 
     // LOCATION //
 
-    private void enableMyLocation(){
+    private void enableMyLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             if (mMap != null) {
                 mMap.setMyLocationEnabled(true);
-                }
+            }
             locationPermissionsGranted = true;
         } else {
             PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
@@ -260,15 +259,15 @@ public class MapsActivity extends FragmentActivity
                     public void onComplete(@NonNull Task<Location> task) {
                         if (task.isSuccessful()) {
                             lastKnownLocation = task.getResult();
-                            if(lastKnownLocation.getLatitude()<37.514961&&lastKnownLocation.getLatitude()>37.479590&&
-                                    lastKnownLocation.getLongitude()<24.946950&&lastKnownLocation.getLongitude()>24.875893){
-                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude()),(float) 14.7));
+                            if (lastKnownLocation.getLatitude() < 37.514961 && lastKnownLocation.getLatitude() > 37.479590 &&
+                                    lastKnownLocation.getLongitude() < 24.946950 && lastKnownLocation.getLongitude() > 24.875893) {
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()), (float) 14.7));
                             }
                         }
                     }
                 });
             }
-        } catch (SecurityException e)  {
+        } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage(), e);
         }
     }
@@ -276,12 +275,12 @@ public class MapsActivity extends FragmentActivity
 
     // FEATURES //
 
-    private void makeFeature(String filename, List<LatLng[]> rows, LatLng[] line, ArrayList<String> names){
+    private void makeFeature(String filename, List<LatLng[]> rows, LatLng[] line, ArrayList<String> names) {
         try {
             JSONObject path = new JSONObject(jsonFromAssets(filename));
             JSONArray pathArray = path.getJSONArray("features");
 
-            for (int i=0; i<pathArray.length(); i++){
+            for (int i = 0; i < pathArray.length(); i++) {
                 JSONObject pathData = pathArray.getJSONObject(i);
                 //fot the name
                 names.add(pathData.getString("name"));
@@ -290,8 +289,7 @@ public class MapsActivity extends FragmentActivity
                 JSONArray coordsDoubleArray;
                 LatLng coords;
                 line = new LatLng[coordsArray.length()];
-                for(int j=0; j<coordsArray.length(); j++)
-                {
+                for (int j = 0; j < coordsArray.length(); j++) {
                     coordsDoubleArray = coordsArray.getJSONArray(j);
                     //geojson provides coordinates in long - lat format (not lat - long):
                     coords = new LatLng(coordsDoubleArray.getDouble(1), coordsDoubleArray.getDouble(0));
@@ -304,16 +302,16 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
-    private void drawPaths(){
+    private void drawPaths() {
         List<LatLng> list = new ArrayList<>();
         Polyline polyline;
 
-        for(int i = 0; i < Prows.size(); i++){
+        for (int i = 0; i < Prows.size(); i++) {
             polyline = mMap.addPolyline(new PolylineOptions()
-            .clickable(true)
-            .color(PATH_COLORS[i])
-            .width(PATH_UNSELECTED_W));
-            for(int j = 0; j < Prows.get(i).length; j++){
+                    .clickable(true)
+                    .color(PATH_COLORS[i])
+                    .width(PATH_UNSELECTED_W));
+            for (int j = 0; j < Prows.get(i).length; j++) {
                 list.add(Prows.get(i)[j]);
             }
             polyline.setPoints(list);
@@ -322,14 +320,14 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
-    private void drawMarkers(){
+    private void drawMarkers() {
         Marker marker;
-        for(int i = 0; i < Mrows.size(); i++){
-            for(int j = 0; j < Mrows.get(i).length; j++){
+        for (int i = 0; i < Mrows.size(); i++) {
+            for (int j = 0; j < Mrows.get(i).length; j++) {
                 marker = mMap.addMarker(new MarkerOptions()
-                .position((Mrows.get(i)[j]))
-                .title("POI "+(j+1))
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.flag)));
+                        .position((Mrows.get(i)[j]))
+                        .title("POI " + (j + 1))
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.flag)));
                 marker.setVisible(false);
                 markers.add(marker);
             }
@@ -339,7 +337,7 @@ public class MapsActivity extends FragmentActivity
 
     // ADJUSTMENTS //
 
-    private void zoomRethink(){
+    private void zoomRethink() {
         //paths
         for (int i = 0; i < polylines.size(); i++) {
             if (mMap.getCameraPosition().zoom > MIN_PATHS_VISIBLE_ZOOM) {
@@ -351,7 +349,7 @@ public class MapsActivity extends FragmentActivity
         //markers
         for (int i = 0; i < markers.size(); i++) {
             if (mMap.getCameraPosition().zoom > MIN_MARKERS_VISIBLE_ZOOM) {
-                if(visibleMarkers[i]){
+                if (visibleMarkers[i]) {
                     markers.get(i).setVisible(true);
                 }
             } else {
@@ -360,23 +358,21 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
-    private void pathRethink(Polyline polyline){
-        if(polyline.getWidth()==PATH_UNSELECTED_W){
+    private void pathRethink(Polyline polyline) {
+        if (polyline.getWidth() == PATH_UNSELECTED_W) {
             polyline.setWidth(PATH_SELECTED_W);
-            for(int i=0; i<polylines.size(); i++){
-                if(!polylines.get(i).getId().equals(polyline.getId())){
+            for (int i = 0; i < polylines.size(); i++) {
+                if (!polylines.get(i).getId().equals(polyline.getId())) {
                     polylines.get(i).setWidth(PATH_UNSELECTED_W);
-                }
-                else{
+                } else {
                     pathSelected = i;
                 }
 
             }
             markersRethink();
             cameraRethink();
-        }
-        else{
-            for(int i=0; i<polylines.size(); i++){
+        } else {
+            for (int i = 0; i < polylines.size(); i++) {
                 polylines.get(i).setWidth(PATH_UNSELECTED_W);
                 pathSelected = -1;
                 markersRethink();
@@ -385,15 +381,14 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
-    private void markersRethink(){
+    private void markersRethink() {
         int id = 0;
-        for(int i = 0; i < Mrows.size(); i++){
-            for(int j = 0; j < Mrows.get(i).length; j++){
-                if(i==pathSelected){
+        for (int i = 0; i < Mrows.size(); i++) {
+            for (int j = 0; j < Mrows.get(i).length; j++) {
+                if (i == pathSelected) {
                     markers.get(id).setVisible(true);
                     visibleMarkers[id] = true;
-                }
-                else{
+                } else {
                     markers.get(id).setVisible(false);
                     visibleMarkers[id] = false;
                 }
@@ -402,13 +397,14 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
-    private void cameraRethink(){
+    private void cameraRethink() {
         List<LatLng> temp = polylines.get(pathSelected).getPoints();
         double lat = temp.get(0).latitude;
         double lng = temp.get(0).longitude;
-        lat += temp.get(temp.size()-1).latitude;
-        lng += temp.get(temp.size()-1).longitude;
-        lat /= 2; lng /= 2;
+        lat += temp.get(temp.size() - 1).latitude;
+        lng += temp.get(temp.size() - 1).longitude;
+        lat /= 2;
+        lng /= 2;
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), (float) 13.65));
     }
 
