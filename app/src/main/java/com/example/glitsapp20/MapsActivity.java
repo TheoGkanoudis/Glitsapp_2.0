@@ -1,5 +1,6 @@
 package com.example.glitsapp20;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -20,6 +21,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -41,6 +43,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.AbstractOwnableSynchronizer;
 
 
 public class MapsActivity extends FragmentActivity
@@ -49,6 +52,7 @@ public class MapsActivity extends FragmentActivity
         GoogleMap.OnCameraMoveListener,
         GoogleMap.OnPolylineClickListener,
         GoogleMap.OnMapClickListener,
+        GoogleMap.OnMarkerClickListener,
         GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMapLongClickListener,
         ActivityCompat.OnRequestPermissionsResultCallback,
@@ -76,6 +80,7 @@ public class MapsActivity extends FragmentActivity
     private LatLng newPosition;
     private int icon = 0;
     private double minLocDist = 0.01;
+    private double minLocDistNew;
     private boolean success = false;
 
     LatLng apanoMeria = new LatLng(37.49913, 24.907264);
@@ -107,7 +112,6 @@ public class MapsActivity extends FragmentActivity
             lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
             cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
             userLocation = lastKnownLocation;
-            Toast.makeText(this, "idk", Toast.LENGTH_SHORT).show();
         }
 
         setContentView(R.layout.activity_maps);
@@ -119,6 +123,8 @@ public class MapsActivity extends FragmentActivity
         makeFeature("markers.json", Mrows, Mline, POIPathNames);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        newPosition = cameraPosition;
     }
 
     @Override
@@ -167,6 +173,7 @@ public class MapsActivity extends FragmentActivity
         mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
         mMap.setOnCameraMoveListener(this);
         mMap.setOnPolylineClickListener(this);
+        mMap.setOnMarkerClickListener(this);
         mMap.setOnMapClickListener(this);
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
@@ -190,6 +197,13 @@ public class MapsActivity extends FragmentActivity
     }
 
     @Override
+    public boolean onMarkerClick(@NonNull Marker marker) {
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), (float)14.5));
+        //TODO showMarkerInfo(marker);
+        return true;
+    }
+
+    @Override
     public void onMapClick(@NonNull LatLng latLng) {
         if (pathSelected >= 0) {
             pathRethink(polylines.get(pathSelected));
@@ -199,10 +213,21 @@ public class MapsActivity extends FragmentActivity
     @Override
     public boolean onMyLocationButtonClick() {
         locBut = false;
-            if(getDistance(userPosition, newPosition)<minLocDist){
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(apanoMeria,13));
+        if (locationPermissionsGranted && getDeviceLocation()) {
+            if(mMap.getCameraPosition().zoom > 14){
+                //TODO - fix the power value maybe??
+                minLocDistNew = minLocDist / Math.pow(mMap.getCameraPosition().zoom - 13, 1.25);
+            }
+            else{minLocDistNew=minLocDist;}
+            if (getDistance(userPosition, newPosition) < minLocDistNew) {
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(apanoMeria, 13));
                 locBut = true;
             }
+        }
+//        else{
+//            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(apanoMeria, 13));
+//            Toast.makeText(this, "ye", Toast.LENGTH_SHORT).show();
+//        }
         return locBut;
     }
 
@@ -236,7 +261,6 @@ public class MapsActivity extends FragmentActivity
          * Get the best and most recent location of the device, which may be null in rare
          * cases when a location is not available.
          */
-        success = false;
         try {
             if (locationPermissionsGranted) {
                 Task<Location> locationResult = fusedLocationClient.getLastLocation();
@@ -441,4 +465,5 @@ public class MapsActivity extends FragmentActivity
         }
         else{userPosition = newPosition;}
     }
+
 }
