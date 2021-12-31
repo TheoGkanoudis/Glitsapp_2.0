@@ -1,6 +1,5 @@
 package com.example.glitsapp20;
 
-import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -8,20 +7,18 @@ import androidx.fragment.app.FragmentActivity;
 
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 
 import android.os.Bundle;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -43,7 +40,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.AbstractOwnableSynchronizer;
 
 
 public class MapsActivity extends FragmentActivity
@@ -62,11 +58,14 @@ public class MapsActivity extends FragmentActivity
     ArrayList<String> pathNames = new ArrayList<>();
     ArrayList<String> POIPathNames = new ArrayList<>();
     List<LatLng[]> Prows = new ArrayList<LatLng[]>();
-    LatLng[] Pline;
     List<LatLng[]> Mrows = new ArrayList<LatLng[]>();
-    LatLng[] Mline;
     ArrayList<Polyline> polylines = new ArrayList<>();
     ArrayList<Marker> markers = new ArrayList<>();
+
+    ArrayList<String> poiTitles = new ArrayList<>();
+    ArrayList<String> poiDescriptions = new ArrayList<>();
+    ArrayList<String> poiInfo = new ArrayList<>();
+    ArrayList<String> poiImages = new ArrayList<>();
 
     public boolean permissionDenied = false;
     public boolean[] visibleMarkers;
@@ -119,12 +118,17 @@ public class MapsActivity extends FragmentActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        makeFeature("paths.json", Prows, Pline, pathNames);
-        makeFeature("markers.json", Mrows, Mline, POIPathNames);
+        makeFeature("paths.json", Prows, pathNames);
+        makeFeature("markers.json", Mrows, POIPathNames);
+
+        getInfoFromJson("pois.json", poiTitles, poiDescriptions, poiInfo, poiImages);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         newPosition = cameraPosition;
+
+        //for the Poi info popups
+        makePoiPopups();
     }
 
     @Override
@@ -156,7 +160,7 @@ public class MapsActivity extends FragmentActivity
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         if (mMap != null) {
             outState.putParcelable(KEY_CAMERA_POSITION, mMap.getCameraPosition());
             outState.putParcelable(KEY_LOCATION, lastKnownLocation);
@@ -166,7 +170,7 @@ public class MapsActivity extends FragmentActivity
 
     //map
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraPosition, 13));
@@ -289,7 +293,7 @@ public class MapsActivity extends FragmentActivity
 
     // FEATURES //
 
-    private void makeFeature(String filename, List<LatLng[]> rows, LatLng[] line, ArrayList<String> names) {
+    private void makeFeature(String filename, List<LatLng[]> rows, ArrayList<String> names) {
         try {
             JSONObject path = new JSONObject(jsonFromAssets(filename));
             JSONArray pathArray = path.getJSONArray("features");
@@ -302,7 +306,7 @@ public class MapsActivity extends FragmentActivity
                 JSONArray coordsArray = pathData.getJSONArray("coordinates");
                 JSONArray coordsDoubleArray;
                 LatLng coords;
-                line = new LatLng[coordsArray.length()];
+                LatLng[] line = new LatLng[coordsArray.length()];
                 for (int j = 0; j < coordsArray.length(); j++) {
                     coordsDoubleArray = coordsArray.getJSONArray(j);
                     //geojson provides coordinates in long - lat format (not lat - long):
@@ -349,6 +353,42 @@ public class MapsActivity extends FragmentActivity
         visibleMarkers = new boolean[markers.size()];
     }
 
+
+    // POPUPS //
+
+    private void getInfoFromJson(String filename, ArrayList<String> titles, ArrayList<String> descriptions, ArrayList<String> info, ArrayList<String> images){
+        try {
+            JSONObject item = new JSONObject(jsonFromAssets(filename));
+            JSONArray itemArray = item.getJSONArray("points");
+
+
+            for (int i = 0; i < itemArray.length(); i++) {
+                JSONObject itemData = itemArray.getJSONObject(i);
+                titles.add(itemData.getString("title"));
+                descriptions.add(itemData.getString("description"));
+                info.add(itemData.getString("info"));
+                images.add(itemData.getString("image"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void makePoiPopups(){
+        ArrayList<PoiItem> poiItems = new ArrayList<>();
+
+        int counter = 0;
+        for (int i = 0; i < Mrows.size(); i++) {
+            for (int j = 0; j < Mrows.get(i).length; j++) {
+                int drawable = getResources().getIdentifier(poiImages.get(counter)+"jpg","drawable", getPackageName());
+                //TODO - run check for if favourite
+                poiItems.add(new PoiItem(drawable,R.drawable.fav_empty,R.drawable.show_more,poiTitles.get(counter),poiDescriptions.get(counter)));
+                counter++;
+                //TODO - fix this after adding more POIs to json
+                if(counter>1){counter=0;}
+            }
+        }
+    }
     // ADJUSTMENTS //
 
     private void zoomRethink() {
