@@ -1,12 +1,17 @@
 package com.example.glitsapp20;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -14,6 +19,7 @@ import android.location.Location;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -55,17 +61,6 @@ public class MapsActivity extends FragmentActivity
         GoogleMap.OnMyLocationClickListener{
 
     private GoogleMap mMap;
-    ArrayList<String> pathNames = new ArrayList<>();
-    ArrayList<String> POIPathNames = new ArrayList<>();
-    List<LatLng[]> Prows = new ArrayList<LatLng[]>();
-    List<LatLng[]> Mrows = new ArrayList<LatLng[]>();
-    ArrayList<Polyline> polylines = new ArrayList<>();
-    ArrayList<Marker> markers = new ArrayList<>();
-
-    ArrayList<String> poiTitles = new ArrayList<>();
-    ArrayList<String> poiDescriptions = new ArrayList<>();
-    ArrayList<String> poiInfo = new ArrayList<>();
-    ArrayList<String> poiImages = new ArrayList<>();
 
     public boolean permissionDenied = false;
     public boolean[] visibleMarkers;
@@ -81,6 +76,22 @@ public class MapsActivity extends FragmentActivity
     private double minLocDist = 0.01;
     private double minLocDistNew;
     private boolean success = false;
+
+    // POPUPS //
+
+    public static ArrayList<PoiItem> poiItems = new ArrayList<>();
+
+    ArrayList<String> pathNames = new ArrayList<>();
+    ArrayList<String> POIPathNames = new ArrayList<>();
+    List<LatLng[]> Prows = new ArrayList<LatLng[]>();
+    List<LatLng[]> Mrows = new ArrayList<LatLng[]>();
+    ArrayList<Polyline> polylines = new ArrayList<>();
+    ArrayList<Marker> markers = new ArrayList<>();
+
+    ArrayList<String> poiTitles = new ArrayList<>();
+    ArrayList<String> poiDescriptions = new ArrayList<>();
+    ArrayList<String> poiInfo = new ArrayList<>();
+    ArrayList<String> poiImages = new ArrayList<>();
 
     LatLng apanoMeria = new LatLng(37.49913, 24.907264);
     LatLng cameraPosition = apanoMeria;
@@ -203,7 +214,7 @@ public class MapsActivity extends FragmentActivity
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), (float)14.5));
-        //TODO showMarkerInfo(marker);
+        PoiPopup.showPoiInfo(marker, this.getApplicationContext());
         return true;
     }
 
@@ -247,6 +258,7 @@ public class MapsActivity extends FragmentActivity
 
     // LOCATION //
 
+    @SuppressLint("MissingPermission")
     private void enableMyLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -267,7 +279,7 @@ public class MapsActivity extends FragmentActivity
          */
         try {
             if (locationPermissionsGranted) {
-                Task<Location> locationResult = fusedLocationClient.getLastLocation();
+                @SuppressLint("MissingPermission") Task<Location> locationResult = fusedLocationClient.getLastLocation();
                 locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
                     @Override
                     public void onComplete(@NonNull Task<Location> task) {
@@ -344,7 +356,7 @@ public class MapsActivity extends FragmentActivity
             for (int j = 0; j < Mrows.get(i).length; j++) {
                 marker = mMap.addMarker(new MarkerOptions()
                         .position((Mrows.get(i)[j]))
-                        .title("POI " + (j + 1))
+                        .title("" + (j + 1))
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.flag)));
                 marker.setVisible(false);
                 markers.add(marker);
@@ -375,14 +387,15 @@ public class MapsActivity extends FragmentActivity
     }
 
     private void makePoiPopups(){
-        ArrayList<PoiItem> poiItems = new ArrayList<>();
 
         int counter = 0;
         for (int i = 0; i < Mrows.size(); i++) {
             for (int j = 0; j < Mrows.get(i).length; j++) {
+                //TODO - can't get images from drawables
                 int drawable = getResources().getIdentifier(poiImages.get(counter)+"jpg","drawable", getPackageName());
-                //TODO - run check for if favourite
-                poiItems.add(new PoiItem(drawable,R.drawable.fav_empty,R.drawable.show_more,poiTitles.get(counter),poiDescriptions.get(counter)));
+                //TODO change this
+                Drawable dr = getDrawable(R.drawable.tapa);
+                poiItems.add(new PoiItem(poiTitles.get(counter),poiDescriptions.get(counter),poiInfo.get(counter),dr,false, (i*j)+1));
                 counter++;
                 //TODO - fix this after adding more POIs to json
                 if(counter>1){counter=0;}
