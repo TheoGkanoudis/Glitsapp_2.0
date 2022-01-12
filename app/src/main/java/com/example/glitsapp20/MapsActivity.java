@@ -1,17 +1,13 @@
 package com.example.glitsapp20;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -19,7 +15,6 @@ import android.location.Location;
 import android.os.Bundle;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -83,8 +78,8 @@ public class MapsActivity extends FragmentActivity
 
     ArrayList<String> pathNames = new ArrayList<>();
     ArrayList<String> POIPathNames = new ArrayList<>();
-    List<LatLng[]> Prows = new ArrayList<LatLng[]>();
-    List<LatLng[]> Mrows = new ArrayList<LatLng[]>();
+    List<LatLng[]> PathTable = new ArrayList<LatLng[]>();
+    List<LatLng[]> MarkerTable = new ArrayList<LatLng[]>();
     ArrayList<Polyline> polylines = new ArrayList<>();
     ArrayList<Marker> markers = new ArrayList<>();
 
@@ -129,8 +124,8 @@ public class MapsActivity extends FragmentActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        makeFeature("paths.json", Prows, pathNames);
-        makeFeature("markers.json", Mrows, POIPathNames);
+        makeFeature("paths.json", PathTable, pathNames);
+        makeFeature("markers.json", MarkerTable, POIPathNames);
 
         getInfoFromJson("pois.json", poiTitles, poiDescriptions, poiInfo, poiImages);
 
@@ -336,13 +331,13 @@ public class MapsActivity extends FragmentActivity
         List<LatLng> list = new ArrayList<>();
         Polyline polyline;
 
-        for (int i = 0; i < Prows.size(); i++) {
+        for (int i = 0; i < PathTable.size(); i++) {
             polyline = mMap.addPolyline(new PolylineOptions()
                     .clickable(true)
                     .color(PATH_COLORS[i])
                     .width(PATH_UNSELECTED_W));
-            for (int j = 0; j < Prows.get(i).length; j++) {
-                list.add(Prows.get(i)[j]);
+            for (int j = 0; j < PathTable.get(i).length; j++) {
+                list.add(PathTable.get(i)[j]);
             }
             polyline.setPoints(list);
             polylines.add(polyline);
@@ -352,10 +347,10 @@ public class MapsActivity extends FragmentActivity
 
     private void drawMarkers() {
         Marker marker;
-        for (int i = 0; i < Mrows.size(); i++) {
-            for (int j = 0; j < Mrows.get(i).length; j++) {
+        for (int i = 0; i < MarkerTable.size(); i++) {
+            for (int j = 0; j < MarkerTable.get(i).length; j++) {
                 marker = mMap.addMarker(new MarkerOptions()
-                        .position((Mrows.get(i)[j]))
+                        .position((MarkerTable.get(i)[j]))
                         .title("" + (j + 1))
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.flag)));
                 marker.setVisible(false);
@@ -389,16 +384,16 @@ public class MapsActivity extends FragmentActivity
     private void makePoiPopups(){
 
         int counter = 0;
-        for (int i = 0; i < Mrows.size(); i++) {
-            for (int j = 0; j < Mrows.get(i).length; j++) {
+        for (int i = 0; i < MarkerTable.size(); i++) {
+            for (int j = 0; j < MarkerTable.get(i).length; j++) {
                 //TODO - can't get images from drawables
-                int drawable = getResources().getIdentifier(poiImages.get(counter)+"jpg","drawable", getPackageName());
+                int drawable = getResources().getIdentifier("R.drawable"+poiImages.get(counter)+"jpg","drawable", getPackageName());
                 //TODO change this
-                Drawable dr = getDrawable(R.drawable.tapa);
+                Drawable dr = getDrawable(drawable);
                 poiItems.add(new PoiItem(poiTitles.get(counter),poiDescriptions.get(counter),poiInfo.get(counter),dr,false, (i*j)+1));
                 counter++;
                 //TODO - fix this after adding more POIs to json
-                if(counter>1){counter=0;}
+                if(counter>5){counter=0;}
             }
         }
     }
@@ -450,8 +445,8 @@ public class MapsActivity extends FragmentActivity
 
     private void markersRethink() {
         int id = 0;
-        for (int i = 0; i < Mrows.size(); i++) {
-            for (int j = 0; j < Mrows.get(i).length; j++) {
+        for (int i = 0; i < MarkerTable.size(); i++) {
+            for (int j = 0; j < MarkerTable.get(i).length; j++) {
                 if (i == pathSelected) {
                     markers.get(id).setVisible(true);
                     visibleMarkers[id] = true;
