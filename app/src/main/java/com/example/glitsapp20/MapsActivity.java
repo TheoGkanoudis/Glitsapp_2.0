@@ -392,8 +392,6 @@ public class MapsActivity extends FragmentActivity
                 Drawable dr = getDrawable(drawable);
                 poiItems.add(new PoiItem(poiTitles.get(counter),poiDescriptions.get(counter),poiInfo.get(counter),dr,false, (i*j)+1));
                 counter++;
-                //TODO - fix this after adding more POIs to json - delete if POI info added to POIs.json for each marker in markers.json
-                if(counter>5){counter=0;}
             }
         }
     }
