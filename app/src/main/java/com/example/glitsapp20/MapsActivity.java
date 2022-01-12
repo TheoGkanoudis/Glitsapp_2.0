@@ -388,7 +388,6 @@ public class MapsActivity extends FragmentActivity
             for (int j = 0; j < MarkerTable.get(i).length; j++) {
                 //TODO - can't get images from drawables
                 int drawable = getResources().getIdentifier("R.drawable"+poiImages.get(counter)+"jpg","drawable", getPackageName());
-                //TODO change this
                 Drawable dr = getDrawable(drawable);
                 poiItems.add(new PoiItem(poiTitles.get(counter),poiDescriptions.get(counter),poiInfo.get(counter),dr,false, (i*j)+1));
                 counter++;
