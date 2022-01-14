@@ -3,62 +3,84 @@ package com.example.glitsapp20;
 import static com.example.glitsapp20.MapsActivity.poiItems;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
-public class PoiPopup {
+import java.lang.reflect.Field;
 
-    private static View mWindow;
+public class PoiPopup extends MapsActivity{
+
+    public static int getResId(String resName, Class<?> c) {
+
+        try {
+            Field idField = c.getDeclaredField(resName);
+            return idField.getInt(idField);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public static void showPoiInfo(int marker, Context mContext, RelativeLayout mainLayout){
+        PoiItem item = poiItems.get(marker);
+        renderWindow(item, mContext, mainLayout);
+    }
 
 
+    private static void renderWindow(PoiItem item, Context mContext, RelativeLayout mainLayout){
 
-    private static void renderWindow(PoiItem item, View view, Context mContext){
-
-
-        mWindow = LayoutInflater.from(mContext).inflate(R.layout.poi_item, null);
+        //View myLayout = inflater.inflate(R.layout.poi_item, mainLayout, false);
+        View myLayout = mainLayout.findViewById(R.id.poi_popup);
 
         String title = item.getTitle();
         String description = item.getDescription();
         String info = item.getInfo();
-        Drawable image = item.getImage();
+        String image = item.getImage();
         boolean fav = item.getFav();
+        int trail = item.getTrail();
 
-        TextView tvTitle = (TextView) view.findViewById(R.id.poi_title);
+        TextView tvTitle = (TextView) myLayout.findViewById(R.id.poi_title);
         if(!title.equals("")){
             tvTitle.setText(title);
         }
 
-        TextView tvDescription = (TextView) view.findViewById(R.id.poi_description);
+        TextView tvDescription = (TextView) myLayout.findViewById(R.id.poi_description);
         if(!description.equals("")){
             tvDescription.setText(description);
         }
 
-        TextView tvInfo = (TextView) view.findViewById(R.id.poi_info);
+        TextView tvInfo = (TextView) myLayout.findViewById(R.id.poi_info);
         if(!info.equals("")){
             tvInfo.setText(info);
         }
 
-        ImageView tvImage = (ImageView) view.findViewById(R.id.poi_image);
+        ImageView tvImage = (ImageView) myLayout.findViewById(R.id.poi_image);
         if(image!=null){
-            tvImage.setBackground(image);
+            int resID = getResId(image, R.drawable.class);
+            tvImage.setImageResource(resID);
         }
 
-       //TODO - change heart if fav
-
+        RelativeLayout layout = myLayout.findViewById(R.id.poi_popup);
+        layout.setVisibility(View.VISIBLE);
     }
 
-    public static void showPoiInfo(Marker marker, Context mContext){
-        renderWindow(poiItems.get(Integer.valueOf(marker.getTitle())),mWindow, mContext);
-    }
 
 
 

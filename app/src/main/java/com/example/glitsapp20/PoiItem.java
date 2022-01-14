@@ -3,39 +3,43 @@ package com.example.glitsapp20;
 import android.graphics.drawable.Drawable;
 
 public class PoiItem {
-    private static String mTitle;
-    private static String mDescription;
-    private static String mInfo;
-    private static Drawable mImage;
-    private static boolean mFav;
-    private static int mId;
+    private  String mTitle;
+    private  String mDescription;
+    private  String mInfo;
+    private String mImage;
+    private int mTrail;
+    private boolean mFav;
 
-    public PoiItem(String title, String description, String info, Drawable image, boolean fav, int id){
+    public PoiItem(String title, String description, String info, String image, int trail){
         mTitle = title;
         mDescription = description;
         mInfo = info;
         mImage = image;
-        mFav = fav;
-        mId = id;
+        mTrail = trail;
+        mFav = false;
     }
 
-    public static String getTitle() {
+    public String getTitle() {
         return mTitle;
     }
 
-    public static String getDescription() {
+    public  String getDescription() {
         return mDescription;
     }
 
-    public static String getInfo() {
+    public  String getInfo() {
         return mInfo;
     }
 
-    public static Drawable getImage(){
+    public  String getImage(){
         return mImage;
     }
 
-    public static boolean getFav() {
+    public int getTrail(){
+        return  mTrail;
+    }
+
+    public  boolean getFav() {
         return mFav;
     }
 

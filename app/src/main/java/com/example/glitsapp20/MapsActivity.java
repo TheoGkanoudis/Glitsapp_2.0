@@ -1,6 +1,7 @@
 package com.example.glitsapp20;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -14,7 +15,12 @@ import android.location.Location;
 
 import android.os.Bundle;
 
+import android.text.Layout;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -39,8 +45,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class MapsActivity extends FragmentActivity
@@ -83,14 +91,18 @@ public class MapsActivity extends FragmentActivity
     ArrayList<Polyline> polylines = new ArrayList<>();
     ArrayList<Marker> markers = new ArrayList<>();
 
-    ArrayList<String> poiTitles = new ArrayList<>();
-    ArrayList<String> poiDescriptions = new ArrayList<>();
-    ArrayList<String> poiInfo = new ArrayList<>();
-    ArrayList<String> poiImages = new ArrayList<>();
+    String title;
+    String description;
+    String info;
+    String image;
+    int trail;
+    Boolean fav;
 
     LatLng apanoMeria = new LatLng(37.49913, 24.907264);
     LatLng cameraPosition = apanoMeria;
     Location userLocation;
+
+    RelativeLayout mainLayout;
 
     // FINALS //
 
@@ -112,7 +124,7 @@ public class MapsActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         if (savedInstanceState != null) {
             lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
             cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
@@ -126,15 +138,15 @@ public class MapsActivity extends FragmentActivity
         mapFragment.getMapAsync(this);
         makeFeature("paths.json", PathTable, pathNames);
         makeFeature("markers.json", MarkerTable, POIPathNames);
+        makePois();
 
-        getInfoFromJson("pois.json", poiTitles, poiDescriptions, poiInfo, poiImages);
+        mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         newPosition = cameraPosition;
 
         //for the Poi info popups
-        makePoiPopups();
     }
 
     @Override
@@ -209,7 +221,9 @@ public class MapsActivity extends FragmentActivity
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), (float)14.5));
-        PoiPopup.showPoiInfo(marker, this.getApplicationContext());
+        PoiPopup.showPoiInfo(Integer.parseInt(Objects.requireNonNull(marker.getTitle())), this.getApplicationContext(), mainLayout);
+        PoiItem item = poiItems.get(Integer.parseInt(marker.getTitle()));
+
         return true;
     }
 
@@ -234,10 +248,6 @@ public class MapsActivity extends FragmentActivity
                 locBut = true;
             }
         }
-//        else{
-//            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(apanoMeria, 13));
-//            Toast.makeText(this, "ye", Toast.LENGTH_SHORT).show();
-//        }
         return locBut;
     }
 
@@ -347,14 +357,16 @@ public class MapsActivity extends FragmentActivity
 
     private void drawMarkers() {
         Marker marker;
+        int counter = 0;
         for (int i = 0; i < MarkerTable.size(); i++) {
             for (int j = 0; j < MarkerTable.get(i).length; j++) {
                 marker = mMap.addMarker(new MarkerOptions()
                         .position((MarkerTable.get(i)[j]))
-                        .title("" + (j + 1))
+                        .title("" + counter)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.flag)));
                 marker.setVisible(false);
                 markers.add(marker);
+                counter++;
             }
         }
         visibleMarkers = new boolean[markers.size()];
@@ -363,37 +375,27 @@ public class MapsActivity extends FragmentActivity
 
     // POPUPS //
 
-    private void getInfoFromJson(String filename, ArrayList<String> titles, ArrayList<String> descriptions, ArrayList<String> info, ArrayList<String> images){
+    private void makePois(){
         try {
-            JSONObject item = new JSONObject(jsonFromAssets(filename));
+            JSONObject item = new JSONObject(jsonFromAssets("pois.json"));
             JSONArray itemArray = item.getJSONArray("points");
 
 
             for (int i = 0; i < itemArray.length(); i++) {
                 JSONObject itemData = itemArray.getJSONObject(i);
-                titles.add(itemData.getString("title"));
-                descriptions.add(itemData.getString("description"));
-                info.add(itemData.getString("info"));
-                images.add(itemData.getString("image"));
+                title = itemData.getString("title");
+                description = itemData.getString("description");
+                info = itemData.getString("info");
+                image = itemData.getString("image");
+                PoiItem poiItem = new PoiItem(title, description, info, image, trail);
+                poiItems.add(poiItem);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private void makePoiPopups(){
 
-        int counter = 0;
-        for (int i = 0; i < MarkerTable.size(); i++) {
-            for (int j = 0; j < MarkerTable.get(i).length; j++) {
-                //TODO - can't get images from drawables
-                int drawable = getResources().getIdentifier("R.drawable"+poiImages.get(counter)+"jpg","drawable", getPackageName());
-                Drawable dr = getDrawable(drawable);
-                poiItems.add(new PoiItem(poiTitles.get(counter),poiDescriptions.get(counter),poiInfo.get(counter),dr,false, (i*j)+1));
-                counter++;
-            }
-        }
-    }
     // ADJUSTMENTS //
 
     private void zoomRethink() {
@@ -497,18 +499,9 @@ public class MapsActivity extends FragmentActivity
 
     private void updateLocateIcon() {
         newPosition = mMap.getCameraPosition().target;
-        if(locationPermissionsGranted && getDeviceLocation()) {
-            if (icon == 0) {
-                if (getDistance(userPosition, newPosition) < minLocDist) {
-                    //TODO - CHANGE LOCATE USER ICON TO APANO MERIA ICON
-                }
-            } else {
-                if (getDistance(userPosition, newPosition) > minLocDist) {
-                    //TODO - CHANGE APANO MERIA ICON LOCATE USER ICON
-                }
-            }
+        if(!locationPermissionsGranted || !getDeviceLocation()) {
+            userPosition = newPosition;
         }
-        else{userPosition = newPosition;}
     }
 
 }
