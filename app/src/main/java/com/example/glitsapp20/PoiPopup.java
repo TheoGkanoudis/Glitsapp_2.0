@@ -38,13 +38,19 @@ public class PoiPopup extends MapsActivity{
         }
     }
 
-    public static void showPoiInfo(int marker, Context mContext, RelativeLayout mainLayout){
+    public static void showPoiInfo(int marker, RelativeLayout mainLayout){
         PoiItem item = poiItems.get(marker);
-        renderWindow(item, mContext, mainLayout);
+        renderWindow(item, mainLayout);
+    }
+
+    public static void hidePoiInfo(RelativeLayout mainLayout){
+        View myLayout = mainLayout.findViewById(R.id.poi_popup);
+        RelativeLayout layout = myLayout.findViewById(R.id.poi_popup);
+        layout.setVisibility(View.GONE);
     }
 
 
-    private static void renderWindow(PoiItem item, Context mContext, RelativeLayout mainLayout){
+    private static void renderWindow(PoiItem item, RelativeLayout mainLayout){
 
         //View myLayout = inflater.inflate(R.layout.poi_item, mainLayout, false);
         View myLayout = mainLayout.findViewById(R.id.poi_popup);

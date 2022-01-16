@@ -216,12 +216,13 @@ public class MapsActivity extends FragmentActivity
     @Override
     public void onPolylineClick(@NonNull Polyline polyline) {
         pathRethink(polyline);
+        PoiPopup.hidePoiInfo(mainLayout);
     }
 
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), (float)14.5));
-        PoiPopup.showPoiInfo(Integer.parseInt(Objects.requireNonNull(marker.getTitle())), this.getApplicationContext(), mainLayout);
+        PoiPopup.showPoiInfo(Integer.parseInt(Objects.requireNonNull(marker.getTitle())), mainLayout);
         PoiItem item = poiItems.get(Integer.parseInt(marker.getTitle()));
 
         return true;
@@ -231,6 +232,7 @@ public class MapsActivity extends FragmentActivity
     public void onMapClick(@NonNull LatLng latLng) {
         if (pathSelected >= 0) {
             pathRethink(polylines.get(pathSelected));
+            PoiPopup.hidePoiInfo(mainLayout);
         }
     }
 
