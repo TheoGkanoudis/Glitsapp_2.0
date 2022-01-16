@@ -10,17 +10,12 @@ import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 
 import android.os.Bundle;
 
-import android.text.Layout;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -45,7 +40,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -72,7 +66,6 @@ public class MapsActivity extends FragmentActivity
     private Location lastKnownLocation;
     private FusedLocationProviderClient fusedLocationClient;
     private boolean locBut = true;
-    private int test = 0;
     private LatLng userPosition;
     private LatLng newPosition;
     private int icon = 0;
@@ -85,16 +78,17 @@ public class MapsActivity extends FragmentActivity
     public static ArrayList<PoiItem> poiItems = new ArrayList<>();
 
     ArrayList<String> pathNames = new ArrayList<>();
-    ArrayList<String> POIPathNames = new ArrayList<>();
-    List<LatLng[]> PathTable = new ArrayList<LatLng[]>();
-    List<LatLng[]> MarkerTable = new ArrayList<LatLng[]>();
+    List<LatLng[]> pathTable = new ArrayList<LatLng[]>();
     ArrayList<Polyline> polylines = new ArrayList<>();
     ArrayList<Marker> markers = new ArrayList<>();
+    int[] markersPerTrail;
+
 
     String title;
     String description;
     String info;
     String image;
+    LatLng coords;
     int trail;
     Boolean fav;
 
@@ -136,9 +130,8 @@ public class MapsActivity extends FragmentActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        makeFeature("paths.json", PathTable, pathNames);
-        makeFeature("markers.json", MarkerTable, POIPathNames);
-        makePois();
+        poisFromJson();
+        pathsFromJson();
 
         mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
 
@@ -223,7 +216,6 @@ public class MapsActivity extends FragmentActivity
     public boolean onMarkerClick(@NonNull Marker marker) {
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), (float)14.5));
         PoiPopup.showPoiInfo(Integer.parseInt(Objects.requireNonNull(marker.getTitle())), mainLayout);
-        PoiItem item = poiItems.get(Integer.parseInt(marker.getTitle()));
 
         return true;
     }
@@ -309,18 +301,17 @@ public class MapsActivity extends FragmentActivity
         return success;
     }
 
+    // PATHS //
 
-    // FEATURES //
-
-    private void makeFeature(String filename, List<LatLng[]> rows, ArrayList<String> names) {
+    private void pathsFromJson(){
         try {
-            JSONObject path = new JSONObject(jsonFromAssets(filename));
-            JSONArray pathArray = path.getJSONArray("features");
+            JSONObject item = new JSONObject(jsonFromAssets("paths.json"));
+            JSONArray pathArray = item.getJSONArray("features");
 
             for (int i = 0; i < pathArray.length(); i++) {
                 JSONObject pathData = pathArray.getJSONObject(i);
                 //fot the name
-                names.add(pathData.getString("name"));
+                pathNames.add(pathData.getString("name"));
                 //for the coordinates
                 JSONArray coordsArray = pathData.getJSONArray("coordinates");
                 JSONArray coordsDoubleArray;
@@ -332,7 +323,7 @@ public class MapsActivity extends FragmentActivity
                     coords = new LatLng(coordsDoubleArray.getDouble(1), coordsDoubleArray.getDouble(0));
                     line[j] = coords;
                 }
-                rows.add(line);
+                pathTable.add(line);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -343,13 +334,13 @@ public class MapsActivity extends FragmentActivity
         List<LatLng> list = new ArrayList<>();
         Polyline polyline;
 
-        for (int i = 0; i < PathTable.size(); i++) {
+        for (int i = 0; i < pathTable.size(); i++) {
             polyline = mMap.addPolyline(new PolylineOptions()
                     .clickable(true)
                     .color(PATH_COLORS[i])
                     .width(PATH_UNSELECTED_W));
-            for (int j = 0; j < PathTable.get(i).length; j++) {
-                list.add(PathTable.get(i)[j]);
+            for (int j = 0; j < pathTable.get(i).length; j++) {
+                list.add(pathTable.get(i)[j]);
             }
             polyline.setPoints(list);
             polylines.add(polyline);
@@ -357,31 +348,12 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
-    private void drawMarkers() {
-        Marker marker;
-        int counter = 0;
-        for (int i = 0; i < MarkerTable.size(); i++) {
-            for (int j = 0; j < MarkerTable.get(i).length; j++) {
-                marker = mMap.addMarker(new MarkerOptions()
-                        .position((MarkerTable.get(i)[j]))
-                        .title("" + counter)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.flag)));
-                marker.setVisible(false);
-                markers.add(marker);
-                counter++;
-            }
-        }
-        visibleMarkers = new boolean[markers.size()];
-    }
+    // POIS //
 
-
-    // POPUPS //
-
-    private void makePois(){
+    private void poisFromJson(){
         try {
             JSONObject item = new JSONObject(jsonFromAssets("pois.json"));
             JSONArray itemArray = item.getJSONArray("points");
-
 
             for (int i = 0; i < itemArray.length(); i++) {
                 JSONObject itemData = itemArray.getJSONObject(i);
@@ -389,14 +361,46 @@ public class MapsActivity extends FragmentActivity
                 description = itemData.getString("description");
                 info = itemData.getString("info");
                 image = itemData.getString("image");
-                PoiItem poiItem = new PoiItem(title, description, info, image, trail);
+                trail = itemData.getInt("trail");
+                coords = new LatLng(itemData.getJSONArray("coordinates").getDouble(1),itemData.getJSONArray("coordinates").getDouble(0));
+                PoiItem poiItem = new PoiItem(title, description, info, image, trail, coords);
                 poiItems.add(poiItem);
+
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
+    private void drawMarkers() {
+        Marker marker;
+        int currentTrail = 0;
+        int counter = 0;
+        markersPerTrail = new int[pathTable.size()];
+        for(int i = 0; i<poiItems.size(); i++) {
+            marker = mMap.addMarker(new MarkerOptions()
+                    .position(poiItems.get(i).getCoords())
+                    .title("" + i)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.flag)));
+            marker.setVisible(false);
+            markers.add(marker);
+
+            if(poiItems.get(i).getTrail()!=currentTrail){
+                Log.e(null, "a"+poiItems.get(i).getTrail());
+                Log.e(null, "b"+currentTrail);
+                Log.e(null, "c"+counter);
+                Log.e(null, "d"+i);
+                markersPerTrail[currentTrail]=counter;
+                currentTrail++;
+                counter = 0;
+            }
+            counter++;
+        }
+        markersPerTrail[currentTrail]=counter;
+
+
+        visibleMarkers = new boolean[markers.size()];
+    }
 
     // ADJUSTMENTS //
 
@@ -446,8 +450,9 @@ public class MapsActivity extends FragmentActivity
 
     private void markersRethink() {
         int id = 0;
-        for (int i = 0; i < MarkerTable.size(); i++) {
-            for (int j = 0; j < MarkerTable.get(i).length; j++) {
+        for (int i = 0; i < markersPerTrail.length; i++) {
+            int counter =0;
+            for (int j = 0; j < markersPerTrail[i]; j++) {
                 if (i == pathSelected) {
                     markers.get(id).setVisible(true);
                     visibleMarkers[id] = true;
@@ -456,8 +461,11 @@ public class MapsActivity extends FragmentActivity
                     visibleMarkers[id] = false;
                 }
                 id++;
+                counter++;
             }
+
         }
+
     }
 
     private void cameraRethink() {
@@ -468,7 +476,7 @@ public class MapsActivity extends FragmentActivity
         lng += temp.get(temp.size() - 1).longitude;
         lat /= 2;
         lng /= 2;
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), (float) 13.65));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), (float) 13.85));
     }
 
     // OPERATIONAL //

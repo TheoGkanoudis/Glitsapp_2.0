@@ -21,6 +21,7 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
 import java.lang.reflect.Field;
@@ -52,12 +53,10 @@ public class PoiPopup extends MapsActivity{
 
     private static void renderWindow(PoiItem item, RelativeLayout mainLayout){
 
-        //View myLayout = inflater.inflate(R.layout.poi_item, mainLayout, false);
         View myLayout = mainLayout.findViewById(R.id.poi_popup);
 
         String title = item.getTitle();
         String description = item.getDescription();
-        String info = item.getInfo();
         String image = item.getImage();
         boolean fav = item.getFav();
         int trail = item.getTrail();
@@ -70,11 +69,6 @@ public class PoiPopup extends MapsActivity{
         TextView tvDescription = (TextView) myLayout.findViewById(R.id.poi_description);
         if(!description.equals("")){
             tvDescription.setText(description);
-        }
-
-        TextView tvInfo = (TextView) myLayout.findViewById(R.id.poi_info);
-        if(!info.equals("")){
-            tvInfo.setText(info);
         }
 
         ImageView tvImage = (ImageView) myLayout.findViewById(R.id.poi_image);
