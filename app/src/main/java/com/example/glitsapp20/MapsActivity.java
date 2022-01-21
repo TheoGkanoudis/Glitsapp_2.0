@@ -75,22 +75,14 @@ public class MapsActivity extends FragmentActivity
 
     // POPUPS //
 
-    public static ArrayList<PoiItem> poiItems = new ArrayList<>();
+    public static ArrayList<Poi> poiList = new ArrayList<>();
+    public static ArrayList<Trail> trailList = new ArrayList<>();
 
-    ArrayList<String> pathNames = new ArrayList<>();
-    List<LatLng[]> pathTable = new ArrayList<LatLng[]>();
     ArrayList<Polyline> polylines = new ArrayList<>();
     ArrayList<Marker> markers = new ArrayList<>();
     int[] markersPerTrail;
 
 
-    String title;
-    String description;
-    String info;
-    String image;
-    LatLng coords;
-    int trail;
-    Boolean fav;
 
     LatLng apanoMeria = new LatLng(37.49913, 24.907264);
     LatLng cameraPosition = apanoMeria;
@@ -131,7 +123,7 @@ public class MapsActivity extends FragmentActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         poisFromJson();
-        pathsFromJson();
+        trailsFromJson();
 
         mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
 
@@ -209,13 +201,13 @@ public class MapsActivity extends FragmentActivity
     @Override
     public void onPolylineClick(@NonNull Polyline polyline) {
         pathRethink(polyline);
-        PoiPopup.hidePoiInfo(mainLayout);
+        PoiPopup.hidePoiPopup(mainLayout);
     }
 
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), (float)14.5));
-        PoiPopup.showPoiInfo(Integer.parseInt(Objects.requireNonNull(marker.getTitle())), mainLayout);
+        PoiPopup.showPoiPopup(Integer.parseInt(Objects.requireNonNull(marker.getTitle())), mainLayout);
 
         return true;
     }
@@ -224,7 +216,7 @@ public class MapsActivity extends FragmentActivity
     public void onMapClick(@NonNull LatLng latLng) {
         if (pathSelected >= 0) {
             pathRethink(polylines.get(pathSelected));
-            PoiPopup.hidePoiInfo(mainLayout);
+            PoiPopup.hidePoiPopup(mainLayout);
         }
     }
 
@@ -303,27 +295,42 @@ public class MapsActivity extends FragmentActivity
 
     // PATHS //
 
-    private void pathsFromJson(){
-        try {
-            JSONObject item = new JSONObject(jsonFromAssets("paths.json"));
-            JSONArray pathArray = item.getJSONArray("features");
+    private void trailsFromJson(){
 
-            for (int i = 0; i < pathArray.length(); i++) {
-                JSONObject pathData = pathArray.getJSONObject(i);
-                //fot the name
-                pathNames.add(pathData.getString("name"));
-                //for the coordinates
-                JSONArray coordsArray = pathData.getJSONArray("coordinates");
+        try {
+            JSONObject trail = new JSONObject(jsonFromAssets("trails.json"));
+            JSONArray trailArray = trail.getJSONArray("features");
+
+            //new
+            String name;
+            String info;
+            String image;
+            for (int i = 0; i < trailArray.length(); i++) {
+                JSONObject trailData = trailArray.getJSONObject(i);
+
+                name = trailData.getString("name");
+                info = trailData.getString("info");
+                image = trailData.getString("image");
+                JSONArray coordsArray = trailData.getJSONArray("coordinates");
+                JSONArray rockArray = trailData.getJSONArray("rocks");
+
                 JSONArray coordsDoubleArray;
-                LatLng coords;
-                LatLng[] line = new LatLng[coordsArray.length()];
+                LatLng currentCoords;
+                LatLng[] path = new LatLng[coordsArray.length()];
                 for (int j = 0; j < coordsArray.length(); j++) {
                     coordsDoubleArray = coordsArray.getJSONArray(j);
-                    //geojson provides coordinates in long - lat format (not lat - long):
-                    coords = new LatLng(coordsDoubleArray.getDouble(1), coordsDoubleArray.getDouble(0));
-                    line[j] = coords;
+                    currentCoords = new LatLng(coordsDoubleArray.getDouble(1), coordsDoubleArray.getDouble(0));
+                    path[j] = currentCoords;
                 }
-                pathTable.add(line);
+
+                char[] rocks= new char[rockArray.length()];
+                for (int j = 0; j < rockArray.length(); j++) {
+                    rocks[j] = rockArray.getString(j).charAt(0);
+                }
+
+                Trail currentTrail = new Trail(name, info, rocks, image, path);
+                trailList.add(currentTrail);
+
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -334,13 +341,13 @@ public class MapsActivity extends FragmentActivity
         List<LatLng> list = new ArrayList<>();
         Polyline polyline;
 
-        for (int i = 0; i < pathTable.size(); i++) {
+        for (int i = 0; i < trailList.size(); i++) {
             polyline = mMap.addPolyline(new PolylineOptions()
                     .clickable(true)
                     .color(PATH_COLORS[i])
                     .width(PATH_UNSELECTED_W));
-            for (int j = 0; j < pathTable.get(i).length; j++) {
-                list.add(pathTable.get(i)[j]);
+            for (int j = 0; j < trailList.get(i).getCoords().length; j++) {
+                list.add(trailList.get(i).getCoords()[j]);
             }
             polyline.setPoints(list);
             polylines.add(polyline);
@@ -351,20 +358,29 @@ public class MapsActivity extends FragmentActivity
     // POIS //
 
     private void poisFromJson(){
-        try {
-            JSONObject item = new JSONObject(jsonFromAssets("pois.json"));
-            JSONArray itemArray = item.getJSONArray("points");
+        String title;
+        String description;
+        String info;
+        String image;
+        LatLng coords;
+        int trail;
 
-            for (int i = 0; i < itemArray.length(); i++) {
-                JSONObject itemData = itemArray.getJSONObject(i);
+        try {
+            JSONObject poi = new JSONObject(jsonFromAssets("pois.json"));
+            JSONArray poiArray = poi.getJSONArray("points");
+
+            for (int i = 0; i < poiArray.length(); i++) {
+                JSONObject itemData = poiArray.getJSONObject(i);
+
                 title = itemData.getString("title");
                 description = itemData.getString("description");
                 info = itemData.getString("info");
                 image = itemData.getString("image");
                 trail = itemData.getInt("trail");
                 coords = new LatLng(itemData.getJSONArray("coordinates").getDouble(1),itemData.getJSONArray("coordinates").getDouble(0));
-                PoiItem poiItem = new PoiItem(title, description, info, image, trail, coords);
-                poiItems.add(poiItem);
+
+                Poi currentPoi = new Poi(title, description, info, image, trail, coords);
+                poiList.add(currentPoi);
 
             }
         } catch (JSONException e) {
@@ -376,17 +392,17 @@ public class MapsActivity extends FragmentActivity
         Marker marker;
         int currentTrail = 0;
         int counter = 0;
-        markersPerTrail = new int[pathTable.size()];
-        for(int i = 0; i<poiItems.size(); i++) {
+        markersPerTrail = new int[trailList.size()];
+        for(int i = 0; i< poiList.size(); i++) {
             marker = mMap.addMarker(new MarkerOptions()
-                    .position(poiItems.get(i).getCoords())
+                    .position(poiList.get(i).getCoords())
                     .title("" + i)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.flag)));
             marker.setVisible(false);
             markers.add(marker);
 
-            if(poiItems.get(i).getTrail()!=currentTrail){
-                Log.e(null, "a"+poiItems.get(i).getTrail());
+            if(poiList.get(i).getTrail()!=currentTrail){
+                Log.e(null, "a"+ poiList.get(i).getTrail());
                 Log.e(null, "b"+currentTrail);
                 Log.e(null, "c"+counter);
                 Log.e(null, "d"+i);

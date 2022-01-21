@@ -1,28 +1,9 @@
 package com.example.glitsapp20;
 
-import static com.example.glitsapp20.MapsActivity.poiItems;
-
-import android.content.Context;
-import android.content.res.AssetManager;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
-import android.text.Layout;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
-
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 
 import java.lang.reflect.Field;
 
@@ -39,19 +20,18 @@ public class PoiPopup extends MapsActivity{
         }
     }
 
-    public static void showPoiInfo(int marker, RelativeLayout mainLayout){
-        PoiItem item = poiItems.get(marker);
-        renderWindow(item, mainLayout);
+    public static void showPoiPopup(int marker, RelativeLayout mainLayout){
+        Poi item = poiList.get(marker);
+        renderPopup(item, mainLayout);
     }
 
-    public static void hidePoiInfo(RelativeLayout mainLayout){
+    public static void hidePoiPopup(RelativeLayout mainLayout){
         View myLayout = mainLayout.findViewById(R.id.poi_popup);
         RelativeLayout layout = myLayout.findViewById(R.id.poi_popup);
         layout.setVisibility(View.GONE);
     }
 
-
-    private static void renderWindow(PoiItem item, RelativeLayout mainLayout){
+    private static void renderPopup(Poi item, RelativeLayout mainLayout){
 
         View myLayout = mainLayout.findViewById(R.id.poi_popup);
 
@@ -71,17 +51,20 @@ public class PoiPopup extends MapsActivity{
             tvDescription.setText(description);
         }
 
-        ImageView tvImage = (ImageView) myLayout.findViewById(R.id.poi_image);
+        ImageView ivImage = (ImageView) myLayout.findViewById(R.id.poi_image);
         if(image!=null){
             int resID = getResId(image, R.drawable.class);
-            tvImage.setImageResource(resID);
+            ivImage.setImageResource(resID);
         }
 
-        RelativeLayout layout = myLayout.findViewById(R.id.poi_popup);
-        layout.setVisibility(View.VISIBLE);
+        ImageView ivFav = (ImageView) myLayout.findViewById(R.id.poi_fav);
+        if(image!=null && fav){
+            int resID = getResId("fav_filled", R.drawable.class);
+            ivFav.setImageResource(resID);
+        }
+
+        RelativeLayout popup = myLayout.findViewById(R.id.poi_popup);
+        popup.setVisibility(View.VISIBLE);
     }
-
-
-
 
 }
