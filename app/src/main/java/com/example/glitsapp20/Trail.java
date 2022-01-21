@@ -2,24 +2,30 @@ package com.example.glitsapp20;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.sql.Time;
+
 public class Trail {
     private String mName;
     private String mInfo;
     private char[] mRocks;
     private String mImage;
+    private int mDifficulty;
+    private int mTime;
     private LatLng[] mCoords;
     private boolean mFav;
 
-    public Trail(String name, String info, char[] rocks, String image, LatLng[] coords){
+    public Trail(String name, String info, String image, int difficulty, int time, char[] rocks, LatLng[] coords){
         mName = name;
         mInfo = info;
         mRocks = rocks;
         mImage = image;
+        mDifficulty = difficulty;
+        mTime = time;
         mFav = false;
         mCoords = coords;
     }
 
-    public String getTitle() {
+    public String getName() {
         return mName;
     }
 
@@ -35,12 +41,20 @@ public class Trail {
         return mImage;
     }
 
-    public  boolean getFav() {
-        return mFav;
+    public int getDifficulty() {
+        return mDifficulty;
+    }
+
+    public int getTime() {
+        return mTime;
     }
 
     public LatLng[] getCoords() {
         return mCoords;
+    }
+
+    public  boolean getFav() {
+        return mFav;
     }
 
 }

@@ -20,9 +20,9 @@ public class PoiPopup extends MapsActivity{
         }
     }
 
-    public static void showPoiPopup(int marker, RelativeLayout mainLayout){
-        Poi item = poiList.get(marker);
-        renderPopup(item, mainLayout);
+    public static void showPoiPopup(int item, RelativeLayout mainLayout){
+        Poi poi = poiList.get(item);
+        renderPopup(poi, mainLayout);
     }
 
     public static void hidePoiPopup(RelativeLayout mainLayout){
@@ -39,7 +39,6 @@ public class PoiPopup extends MapsActivity{
         String description = item.getDescription();
         String image = item.getImage();
         boolean fav = item.getFav();
-        int trail = item.getTrail();
 
         TextView tvTitle = (TextView) myLayout.findViewById(R.id.poi_title);
         if(!title.equals("")){

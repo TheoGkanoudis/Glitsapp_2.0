@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/trail_info_activity"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -31,12 +32,14 @@
         android:layout_marginTop="-25dp"
         app:cardCornerRadius="25dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bgImage">
+        app:layout_constraintTop_toBottomOf="@+id/bgImage"
+        android:layout_marginBottom="-25dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="20dp">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -64,7 +67,6 @@
                         android:textStyle="bold" />
 
                     <LinearLayout
-                        android:id="@+id/trail_description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -91,15 +93,14 @@
                             android:layout_gravity="end"
                             android:layout_marginStart="20dp"
                             android:text="Δυσκολία:"
-                            android:textColor="@color/black"
+                            android:textColor="@color/teal_700"
                             android:textSize="18sp" />
 
                         <ImageView
                             android:id="@+id/trail_difficulty"
-                            android:layout_width="wrap_content"
-                            android:layout_height="12dp"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="2.5dp"
+                            android:layout_marginStart="15dp"
+                            android:layout_width="40dp"
+                            android:layout_height="wrap_content"
                             android:src="@drawable/diff0" />
 
                     </LinearLayout>
@@ -164,7 +165,7 @@
                         android:id="@+id/trail_info"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="info"
+                        android:text="@string/lorem_ipsum"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
 
@@ -180,15 +181,17 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:paddingBottom="20dp">
 
                         <!--TODO - TRAIL POIs RECYCLERVIEW-->
 
                         <!--placeholder:-->
                         <include
                             layout="@layout/poi_popup"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="visible"/>
 
                     </LinearLayout>
                 </LinearLayout>

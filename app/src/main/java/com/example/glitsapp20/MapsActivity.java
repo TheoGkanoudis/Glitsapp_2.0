@@ -9,12 +9,15 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -24,7 +27,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -45,6 +50,7 @@ import java.util.List;
 import java.util.Objects;
 
 
+
 public class MapsActivity extends FragmentActivity
         implements
         OnMapReadyCallback,
@@ -58,6 +64,7 @@ public class MapsActivity extends FragmentActivity
         GoogleMap.OnMyLocationClickListener{
 
     private GoogleMap mMap;
+    private static Context mContext;
 
     public boolean permissionDenied = false;
     public boolean[] visibleMarkers;
@@ -106,11 +113,10 @@ public class MapsActivity extends FragmentActivity
 
     // DEFAULT //
 
-    //operational
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        mContext = this;
         if (savedInstanceState != null) {
             lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
             cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
@@ -136,6 +142,7 @@ public class MapsActivity extends FragmentActivity
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
             return;
         }
@@ -171,7 +178,7 @@ public class MapsActivity extends FragmentActivity
         super.onSaveInstanceState(outState);
     }
 
-    //map
+    // MAP //
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
@@ -188,8 +195,8 @@ public class MapsActivity extends FragmentActivity
         enableMyLocation();
         drawPaths();
         drawMarkers();
-
         getDeviceLocation();
+        setOnClickListeners();
     }
 
     @Override
@@ -200,22 +207,28 @@ public class MapsActivity extends FragmentActivity
 
     @Override
     public void onPolylineClick(@NonNull Polyline polyline) {
-        pathRethink(polyline);
+        polylineRethink(polyline);
         PoiPopup.hidePoiPopup(mainLayout);
     }
 
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), (float)14.5));
+        if(mMap.getCameraPosition().zoom<=14.5) {
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), (float) 14.5));
+        }
+        else{
+            mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+        }
+        TrailPopup.hideTrailPopup(mainLayout);
         PoiPopup.showPoiPopup(Integer.parseInt(Objects.requireNonNull(marker.getTitle())), mainLayout);
-
         return true;
     }
 
     @Override
     public void onMapClick(@NonNull LatLng latLng) {
         if (pathSelected >= 0) {
-            pathRethink(polylines.get(pathSelected));
+            polylineRethink(polylines.get(pathSelected));
+            TrailPopup.hideTrailPopup(mainLayout);
             PoiPopup.hidePoiPopup(mainLayout);
         }
     }
@@ -305,30 +318,37 @@ public class MapsActivity extends FragmentActivity
             String name;
             String info;
             String image;
+            int difficulty;
+            int time;
+
             for (int i = 0; i < trailArray.length(); i++) {
                 JSONObject trailData = trailArray.getJSONObject(i);
 
                 name = trailData.getString("name");
                 info = trailData.getString("info");
                 image = trailData.getString("image");
-                JSONArray coordsArray = trailData.getJSONArray("coordinates");
-                JSONArray rockArray = trailData.getJSONArray("rocks");
+                difficulty = trailData.getInt("difficulty");
+                time = trailData.getInt("time");
 
-                JSONArray coordsDoubleArray;
-                LatLng currentCoords;
-                LatLng[] path = new LatLng[coordsArray.length()];
-                for (int j = 0; j < coordsArray.length(); j++) {
-                    coordsDoubleArray = coordsArray.getJSONArray(j);
-                    currentCoords = new LatLng(coordsDoubleArray.getDouble(1), coordsDoubleArray.getDouble(0));
-                    path[j] = currentCoords;
-                }
+                JSONArray rockArray = trailData.getJSONArray("rocks");
+                JSONArray coordsArray = trailData.getJSONArray("coordinates");
 
                 char[] rocks= new char[rockArray.length()];
                 for (int j = 0; j < rockArray.length(); j++) {
                     rocks[j] = rockArray.getString(j).charAt(0);
                 }
 
-                Trail currentTrail = new Trail(name, info, rocks, image, path);
+                JSONArray coordsDoubleArray;
+                LatLng currentCoords;
+                LatLng[] path = new LatLng[coordsArray.length()];
+
+                for (int j = 0; j < coordsArray.length(); j++) {
+                    coordsDoubleArray = coordsArray.getJSONArray(j);
+                    currentCoords = new LatLng(coordsDoubleArray.getDouble(1), coordsDoubleArray.getDouble(0));
+                    path[j] = currentCoords;
+                }
+
+                Trail currentTrail = new Trail(name, info, image, difficulty, time, rocks, path);
                 trailList.add(currentTrail);
 
             }
@@ -402,10 +422,6 @@ public class MapsActivity extends FragmentActivity
             markers.add(marker);
 
             if(poiList.get(i).getTrail()!=currentTrail){
-                Log.e(null, "a"+ poiList.get(i).getTrail());
-                Log.e(null, "b"+currentTrail);
-                Log.e(null, "c"+counter);
-                Log.e(null, "d"+i);
                 markersPerTrail[currentTrail]=counter;
                 currentTrail++;
                 counter = 0;
@@ -441,7 +457,7 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
-    private void pathRethink(Polyline polyline) {
+    private void polylineRethink(Polyline polyline) {
         if (polyline.getWidth() == PATH_UNSELECTED_W) {
             polyline.setWidth(PATH_SELECTED_W);
             for (int i = 0; i < polylines.size(); i++) {
@@ -453,21 +469,22 @@ public class MapsActivity extends FragmentActivity
 
             }
             markersRethink();
-            cameraRethink();
+            cameraToTrail();
+            TrailPopup.showTrailPopup(pathSelected, mainLayout);
         } else {
             for (int i = 0; i < polylines.size(); i++) {
                 polylines.get(i).setWidth(PATH_UNSELECTED_W);
                 pathSelected = -1;
-                markersRethink();
             }
 
+            PoiPopup.hidePoiPopup(mainLayout);
+            markersRethink();
         }
     }
 
     private void markersRethink() {
         int id = 0;
         for (int i = 0; i < markersPerTrail.length; i++) {
-            int counter =0;
             for (int j = 0; j < markersPerTrail[i]; j++) {
                 if (i == pathSelected) {
                     markers.get(id).setVisible(true);
@@ -477,22 +494,22 @@ public class MapsActivity extends FragmentActivity
                     visibleMarkers[id] = false;
                 }
                 id++;
-                counter++;
             }
 
         }
 
     }
 
-    private void cameraRethink() {
+    private void cameraToTrail() {
         List<LatLng> temp = polylines.get(pathSelected).getPoints();
-        double lat = temp.get(0).latitude;
-        double lng = temp.get(0).longitude;
-        lat += temp.get(temp.size() - 1).latitude;
-        lng += temp.get(temp.size() - 1).longitude;
-        lat /= 2;
-        lng /= 2;
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), (float) 13.85));
+        double lat1 = Math.min(temp.get(0).latitude, temp.get(temp.size() - 1).latitude);
+        double lng1 = Math.min(temp.get(0).longitude, temp.get(temp.size() - 1).longitude);
+        double lat2 = Math.max(temp.get(0).latitude, temp.get(temp.size() - 1).latitude);
+        double lng2 = Math.max(temp.get(0).longitude, temp.get(temp.size() - 1).longitude);
+        LatLng sw = new LatLng(lat1,lng1);
+        LatLng ne = new LatLng(lat2,lng2);
+        LatLngBounds bounds = new LatLngBounds(sw, ne);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
     }
 
     // OPERATIONAL //
@@ -528,6 +545,21 @@ public class MapsActivity extends FragmentActivity
         if(!locationPermissionsGranted || !getDeviceLocation()) {
             userPosition = newPosition;
         }
+    }
+
+    // LISTENERS //
+
+    private void setOnClickListeners() {
+
+        Intent i = new Intent(mContext, TrailInfoActivity.class);
+        View trailPopup = mainLayout.findViewById(R.id.trail_popup);
+
+        trailPopup.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                startActivity(i);
+            }
+        });
     }
 
 }
