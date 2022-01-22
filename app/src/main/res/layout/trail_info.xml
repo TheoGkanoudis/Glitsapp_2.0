@@ -7,32 +7,32 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/bgImage"
+        android:id="@+id/trail_image"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@drawable/grizas"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:translationZ="-100dp"/>
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="25dp"
+        android:id="@+id/back_button"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/back_icon" />
+        android:background="@drawable/back_icon"/>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/info_card"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="-25dp"
         app:cardCornerRadius="25dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bgImage"
+        app:layout_constraintTop_toBottomOf="@+id/trail_image"
         android:layout_marginBottom="-25dp">
 
         <LinearLayout
@@ -58,7 +58,7 @@
                     android:paddingHorizontal="15dp">
 
                     <TextView
-                        android:id="@+id/path_title"
+                        android:id="@+id/trail_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Path Title"
@@ -70,7 +70,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:paddingVertical="10dp">
+                        android:paddingVertical="10dp"
+                        android:layout_marginBottom="5dp">
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -118,37 +119,21 @@
                         android:id="@+id/trail_rocks"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="5dp">
 
-                        <!--TODO- RECYCLERVIEW FOR ROCKS-->
-                        <androidx.cardview.widget.CardView
+                        <ScrollView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                        <androidx.recyclerview.widget.RecyclerView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            app:cardCornerRadius="15dp">
+                            android:orientation="horizontal"
+                            android:id="@+id/rv_rocks"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
-                            <ImageView
-                                android:layout_width="150dp"
-                                android:layout_height="100dp"
-                                android:background="@drawable/metagabbro"/>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Μετα-γάββρος"
-                                android:textColor="@color/white"
-                                android:layout_gravity="bottom"
-                                android:paddingStart="5dp"
-                                android:paddingBottom="5dp"
-                                android:textStyle="bold"
-                                android:shadowColor="@color/black"
-                                android:shadowRadius="4"
-                                android:shadowDx="1.5"
-                                android:shadowDy="1.5"
-                                android:outlineSpotShadowColor="@color/black"/>
-
-                        </androidx.cardview.widget.CardView>
-
+                        </ScrollView>
 
                     </LinearLayout>
 
@@ -163,6 +148,7 @@
 
                     <TextView
                         android:id="@+id/trail_info"
+                        android:layout_marginBottom="5dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/lorem_ipsum"
@@ -182,16 +168,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingBottom="20dp">
+                        android:layout_marginBottom="20dp">
 
-                        <!--TODO - TRAIL POIs RECYCLERVIEW-->
-
-                        <!--placeholder:-->
-                        <include
-                            layout="@layout/poi_popup"
+                        <androidx.recyclerview.widget.RecyclerView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:visibility="visible"/>
+                            android:orientation="vertical"
+                            android:id="@+id/rv_pois"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
                     </LinearLayout>
                 </LinearLayout>

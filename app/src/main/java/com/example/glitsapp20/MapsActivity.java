@@ -1,7 +1,6 @@
 package com.example.glitsapp20;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -27,7 +26,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -45,6 +43,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -69,7 +68,7 @@ public class MapsActivity extends FragmentActivity
     public boolean permissionDenied = false;
     public boolean[] visibleMarkers;
     private boolean locationPermissionsGranted = false;
-    public int pathSelected = -1;
+    public int trailSelected = -1;
     private Location lastKnownLocation;
     private FusedLocationProviderClient fusedLocationClient;
     private boolean locBut = true;
@@ -84,6 +83,7 @@ public class MapsActivity extends FragmentActivity
 
     public static ArrayList<Poi> poiList = new ArrayList<>();
     public static ArrayList<Trail> trailList = new ArrayList<>();
+    public static int trailToPass;
 
     ArrayList<Polyline> polylines = new ArrayList<>();
     ArrayList<Marker> markers = new ArrayList<>();
@@ -226,8 +226,8 @@ public class MapsActivity extends FragmentActivity
 
     @Override
     public void onMapClick(@NonNull LatLng latLng) {
-        if (pathSelected >= 0) {
-            polylineRethink(polylines.get(pathSelected));
+        if (trailSelected >= 0) {
+            polylineRethink(polylines.get(trailSelected));
             TrailPopup.hideTrailPopup(mainLayout);
             PoiPopup.hidePoiPopup(mainLayout);
         }
@@ -348,7 +348,7 @@ public class MapsActivity extends FragmentActivity
                     path[j] = currentCoords;
                 }
 
-                Trail currentTrail = new Trail(name, info, image, difficulty, time, rocks, path);
+                Trail currentTrail = new Trail(name, info, image, difficulty, time, rocks, path, i);
                 trailList.add(currentTrail);
 
             }
@@ -429,8 +429,6 @@ public class MapsActivity extends FragmentActivity
             counter++;
         }
         markersPerTrail[currentTrail]=counter;
-
-
         visibleMarkers = new boolean[markers.size()];
     }
 
@@ -464,17 +462,17 @@ public class MapsActivity extends FragmentActivity
                 if (!polylines.get(i).getId().equals(polyline.getId())) {
                     polylines.get(i).setWidth(PATH_UNSELECTED_W);
                 } else {
-                    pathSelected = i;
+                    trailSelected = i;
                 }
 
             }
             markersRethink();
             cameraToTrail();
-            TrailPopup.showTrailPopup(pathSelected, mainLayout);
+            TrailPopup.showTrailPopup(trailSelected, mainLayout);
         } else {
             for (int i = 0; i < polylines.size(); i++) {
                 polylines.get(i).setWidth(PATH_UNSELECTED_W);
-                pathSelected = -1;
+                trailSelected = -1;
             }
 
             PoiPopup.hidePoiPopup(mainLayout);
@@ -486,7 +484,7 @@ public class MapsActivity extends FragmentActivity
         int id = 0;
         for (int i = 0; i < markersPerTrail.length; i++) {
             for (int j = 0; j < markersPerTrail[i]; j++) {
-                if (i == pathSelected) {
+                if (i == trailSelected) {
                     markers.get(id).setVisible(true);
                     visibleMarkers[id] = true;
                 } else {
@@ -501,7 +499,7 @@ public class MapsActivity extends FragmentActivity
     }
 
     private void cameraToTrail() {
-        List<LatLng> temp = polylines.get(pathSelected).getPoints();
+        List<LatLng> temp = polylines.get(trailSelected).getPoints();
         double lat1 = Math.min(temp.get(0).latitude, temp.get(temp.size() - 1).latitude);
         double lng1 = Math.min(temp.get(0).longitude, temp.get(temp.size() - 1).longitude);
         double lat2 = Math.max(temp.get(0).latitude, temp.get(temp.size() - 1).latitude);
@@ -557,9 +555,38 @@ public class MapsActivity extends FragmentActivity
         trailPopup.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
+                trailToPass = trailSelected;
                 startActivity(i);
             }
         });
+    }
+
+    // MISC //
+
+    public static Trail getTrail(){
+        return trailList.get(trailToPass);
+    }
+
+    public static ArrayList<String> getPoiTitles(Trail trail){
+        ArrayList<String> titles = new ArrayList<>();
+        for(int i = 0; i<poiList.size(); i++){
+            if(poiList.get(i).getTrail()==trail.getId()){
+                titles.add(poiList.get(i).getTitle());
+            }
+        }
+        return titles;
+    }
+
+
+    public static int getResId(String resName, Class<?> c) {
+
+        try {
+            Field idField = c.getDeclaredField(resName);
+            return idField.getInt(idField);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 
 }

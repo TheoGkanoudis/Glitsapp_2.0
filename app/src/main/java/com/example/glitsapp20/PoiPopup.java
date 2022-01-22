@@ -9,20 +9,9 @@ import java.lang.reflect.Field;
 
 public class PoiPopup extends MapsActivity{
 
-    public static int getResId(String resName, Class<?> c) {
-
-        try {
-            Field idField = c.getDeclaredField(resName);
-            return idField.getInt(idField);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
-
     public static void showPoiPopup(int item, RelativeLayout mainLayout){
         Poi poi = poiList.get(item);
-        renderPopup(poi, mainLayout);
+        initPoiPopup(poi, mainLayout);
     }
 
     public static void hidePoiPopup(RelativeLayout mainLayout){
@@ -31,7 +20,7 @@ public class PoiPopup extends MapsActivity{
         layout.setVisibility(View.GONE);
     }
 
-    private static void renderPopup(Poi item, RelativeLayout mainLayout){
+    private static void initPoiPopup(Poi item, RelativeLayout mainLayout){
 
         View myLayout = mainLayout.findViewById(R.id.poi_popup);
 

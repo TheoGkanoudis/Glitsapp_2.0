@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="12dp"
+        android:layout_marginEnd="10dp">
+
+        <ImageView
+            android:id="@+id/rock_image"
+            android:layout_width="157.5dp"
+            android:layout_height="105dp"
+            android:background="@drawable/metagabbro"/>
+
+        <TextView
+            android:id="@+id/rock_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Μετα-γάββρος"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:layout_gravity="bottom"
+            android:paddingStart="5dp"
+            android:paddingBottom="5dp"
+            android:textStyle="bold"
+            android:shadowColor="#000000"
+            android:shadowRadius="4"
+            android:shadowDx="1.5"
+            android:shadowDy="1.5"
+            android:outlineSpotShadowColor="#000000"/>
+
+    </androidx.cardview.widget.CardView>
+
+
+</RelativeLayout>

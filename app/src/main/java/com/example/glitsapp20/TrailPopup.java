@@ -11,16 +11,6 @@ import java.lang.reflect.Field;
 
 public class TrailPopup extends MapsActivity{
 
-    public static int getResId(String resName, Class<?> c) {
-
-        try {
-            Field idField = c.getDeclaredField(resName);
-            return idField.getInt(idField);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
 
     public static void showTrailPopup(int item, RelativeLayout mainLayout){
         Trail trail = trailList.get(item);
@@ -37,13 +27,11 @@ public class TrailPopup extends MapsActivity{
 
         View myLayout = mainLayout.findViewById(R.id.trail_popup);
 
-
-
-
         String name = trail.getName();
         String image = trail.getImage();
         int difficulty = trail.getDifficulty();
-        int time = trail.getTime();
+        String time = trail.getTime();
+
         boolean fav = trail.getFav();
 
         int resID = 0;
@@ -60,32 +48,12 @@ public class TrailPopup extends MapsActivity{
         }
 
         TextView tvTime = (TextView) myLayout.findViewById(R.id.trail_time);
-        int m = time%100;
-        int h = (time-m)/100;
-        String sTime = String.valueOf(h);
-        if(h==1){sTime+=" ώρα";}
-        else{sTime+=" ώρες";}
-        if(m!=0){
-            sTime+=", "+m+" λεπτά";
+        if(time!=null){
+            tvTime.setText(time);
         }
-        tvTime.setText(sTime);
 
         ImageView ivDifficulty = (ImageView) myLayout.findViewById(R.id.trail_difficulty);
-        switch (difficulty){
-            case 0:
-                resID = getResId("diff0", R.drawable.class);
-                break;
-            case 1:
-                resID = getResId("diff1", R.drawable.class);
-                break;
-            case 2:
-                resID = getResId("diff2", R.drawable.class);
-                break;
-            case 3:
-                resID = getResId("diff3", R.drawable.class);
-                break;
-        }
-        ivDifficulty.setImageResource(resID);
+        ivDifficulty.setImageResource(difficulty);
 
         ImageView ivFav = (ImageView) myLayout.findViewById(R.id.trail_fav);
         if(image!=null && fav){
