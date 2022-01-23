@@ -64,7 +64,6 @@ public class MapsActivity extends FragmentActivity
 
     private GoogleMap mMap;
     private static Context mContext;
-
     public boolean permissionDenied = false;
     public boolean[] visibleMarkers;
     private boolean locationPermissionsGranted = false;
@@ -79,8 +78,6 @@ public class MapsActivity extends FragmentActivity
     private double minLocDistNew;
     private boolean success = false;
 
-    // POPUPS //
-
     public static ArrayList<Poi> poiList = new ArrayList<>();
     public static ArrayList<Trail> trailList = new ArrayList<>();
     public static int trailToPass;
@@ -89,12 +86,9 @@ public class MapsActivity extends FragmentActivity
     ArrayList<Marker> markers = new ArrayList<>();
     int[] markersPerTrail;
 
-
-
     LatLng apanoMeria = new LatLng(37.49913, 24.907264);
     LatLng cameraPosition = apanoMeria;
     Location userLocation;
-
     RelativeLayout mainLayout;
 
     // FINALS //
@@ -105,6 +99,7 @@ public class MapsActivity extends FragmentActivity
     private static final int PATH_UNSELECTED_W = 4;
     private static final int PATH_SELECTED_W = 7;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private static final float DEFAULT_MARKER_ALPHA = (float) 0.5;
 
     //keys for storing activity state
     public static final String KEY_LOCATION = "location";
@@ -207,7 +202,7 @@ public class MapsActivity extends FragmentActivity
 
     @Override
     public void onPolylineClick(@NonNull Polyline polyline) {
-        polylineRethink(polyline);
+        pathsRethink(polyline);
         PoiPopup.hidePoiPopup(mainLayout);
     }
 
@@ -220,6 +215,8 @@ public class MapsActivity extends FragmentActivity
             mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
         }
         TrailPopup.hideTrailPopup(mainLayout);
+        markersAlpha();
+        marker.setAlpha(1);
         PoiPopup.showPoiPopup(Integer.parseInt(Objects.requireNonNull(marker.getTitle())), mainLayout);
         return true;
     }
@@ -227,9 +224,7 @@ public class MapsActivity extends FragmentActivity
     @Override
     public void onMapClick(@NonNull LatLng latLng) {
         if (trailSelected >= 0) {
-            polylineRethink(polylines.get(trailSelected));
-            TrailPopup.hideTrailPopup(mainLayout);
-            PoiPopup.hidePoiPopup(mainLayout);
+            pathsRethink(polylines.get(trailSelected));
         }
     }
 
@@ -415,6 +410,7 @@ public class MapsActivity extends FragmentActivity
         markersPerTrail = new int[trailList.size()];
         for(int i = 0; i< poiList.size(); i++) {
             marker = mMap.addMarker(new MarkerOptions()
+                    .alpha((float) 0.5)
                     .position(poiList.get(i).getCoords())
                     .title("" + i)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.flag)));
@@ -455,7 +451,7 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
-    private void polylineRethink(Polyline polyline) {
+    private void pathsRethink(Polyline polyline) {
         if (polyline.getWidth() == PATH_UNSELECTED_W) {
             polyline.setWidth(PATH_SELECTED_W);
             for (int i = 0; i < polylines.size(); i++) {
@@ -466,22 +462,28 @@ public class MapsActivity extends FragmentActivity
                 }
 
             }
-            markersRethink();
             cameraToTrail();
             TrailPopup.showTrailPopup(trailSelected, mainLayout);
-        } else {
-            for (int i = 0; i < polylines.size(); i++) {
-                polylines.get(i).setWidth(PATH_UNSELECTED_W);
+        }
+        else {
+            if(mainLayout.findViewById(R.id.poi_popup).getVisibility()==View.GONE) {
+                polyline.setWidth(PATH_UNSELECTED_W);
+                TrailPopup.hideTrailPopup(mainLayout);
                 trailSelected = -1;
             }
-
-            PoiPopup.hidePoiPopup(mainLayout);
-            markersRethink();
+            else {
+                cameraToTrail();
+                markersAlpha();
+                PoiPopup.hidePoiPopup(mainLayout);
+                TrailPopup.showTrailPopup(trailSelected, mainLayout);
+            }
         }
+        markersRethink();
     }
 
     private void markersRethink() {
         int id = 0;
+        markersAlpha();
         for (int i = 0; i < markersPerTrail.length; i++) {
             for (int j = 0; j < markersPerTrail[i]; j++) {
                 if (i == trailSelected) {
@@ -577,6 +579,11 @@ public class MapsActivity extends FragmentActivity
         return titles;
     }
 
+    public void markersAlpha(){
+        for (Marker marker:markers) {
+            marker.setAlpha(DEFAULT_MARKER_ALPHA);
+        }
+    }
 
     public static int getResId(String resName, Class<?> c) {
 
