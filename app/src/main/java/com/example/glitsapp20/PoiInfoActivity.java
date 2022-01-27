@@ -30,6 +30,7 @@ public class PoiInfoActivity extends Activity {
     public void initPoiInfo(Poi poi, View view){
         String title = poi.getTitle();
         String info = poi.getInfo();
+        boolean fav = poi.getFav();
 
         TextView tvTitle = view.findViewById(R.id.poi_title);
         if(title!=null){
@@ -44,6 +45,23 @@ public class PoiInfoActivity extends Activity {
         ImageView ivBack = view.findViewById(R.id.back_button);
         ivBack.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {finish();}
+        });
+
+        int resID;
+        ImageView ivFav = (ImageView) myLayout.findViewById(R.id.poi_fav);
+        if(fav){
+            resID = MapsActivity.getResId("fav_filled", R.drawable.class);
+        }
+        else{
+            resID = MapsActivity.getResId("fav_empty", R.drawable.class);
+        }
+        ivFav.setImageResource(resID);
+
+        ivFav.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                poi.changeFav();
+                initPoiInfo(poi, view);
+            }
         });
     }
 

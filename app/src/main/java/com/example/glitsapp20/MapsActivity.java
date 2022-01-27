@@ -396,7 +396,7 @@ public class MapsActivity extends FragmentActivity
                 trail = itemData.getInt("trail");
                 coords = new LatLng(itemData.getJSONArray("coordinates").getDouble(1),itemData.getJSONArray("coordinates").getDouble(0));
 
-                Poi currentPoi = new Poi(title, description, info, image, trail, coords);
+                Poi currentPoi = new Poi(title, description, info, image, trail, coords, i);
                 poiList.add(currentPoi);
 
             }

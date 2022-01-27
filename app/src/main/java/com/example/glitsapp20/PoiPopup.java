@@ -45,11 +45,22 @@ public class PoiPopup extends MapsActivity{
             ivImage.setImageResource(resID);
         }
 
+        int resID;
         ImageView ivFav = (ImageView) myLayout.findViewById(R.id.poi_fav);
-        if(image!=null && fav){
-            int resID = getResId("fav_filled", R.drawable.class);
-            ivFav.setImageResource(resID);
+        if(fav){
+            resID = getResId("fav_filled", R.drawable.class);
         }
+        else{
+            resID = getResId("fav_empty", R.drawable.class);
+        }
+        ivFav.setImageResource(resID);
+
+        ivFav.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                item.changeFav();
+                initPoiPopup(item, mainLayout);
+            }
+        });
 
         RelativeLayout popup = myLayout.findViewById(R.id.poi_popup);
         popup.setVisibility(View.VISIBLE);

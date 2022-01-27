@@ -17,6 +17,7 @@ public class rvPoiAdapter extends RecyclerView.Adapter<rvPoiAdapter.ViewHolder> 
     private List<String> mTitles;
     private List<String> mInfo;
     private LayoutInflater mInflater;
+    private ItemClickListener mClickListener;
     private boolean[] mFav;
 
 
@@ -56,7 +57,7 @@ public class rvPoiAdapter extends RecyclerView.Adapter<rvPoiAdapter.ViewHolder> 
     }
 
     // stores and recycles views as they are scrolled off screen
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView poiTitle;
         ImageView poiImage;
         TextView poiInfo;
@@ -69,8 +70,22 @@ public class rvPoiAdapter extends RecyclerView.Adapter<rvPoiAdapter.ViewHolder> 
             poiImage = itemView.findViewById(R.id.poi_image);
             poiInfo = itemView.findViewById(R.id.poi_info);
             poiFav = itemView.findViewById(R.id.poi_fav);
+
+            itemView.setOnClickListener(this);
         }
 
+        @Override
+        public void onClick(View view) {
+            if(mClickListener!=null) mClickListener.onItemClick(view, getAdapterPosition());
+        }
+    }
+
+    void setClickListener(ItemClickListener itemClickListener){
+        this.mClickListener = itemClickListener;
+    }
+
+    public interface ItemClickListener{
+        void onItemClick(View view, int position);
     }
 
 }

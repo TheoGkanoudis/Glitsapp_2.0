@@ -5,6 +5,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 
 public class Poi {
+    private int mId;
     private  String mTitle;
     private  String mDescription;
     private  String mInfo;
@@ -14,7 +15,7 @@ public class Poi {
     private int mTrail;
     private boolean mFav;
 
-    public Poi(String title, String description, String info, String image, int trail, LatLng coords){
+    public Poi(String title, String description, String info, String image, int trail, LatLng coords, int id){
         mTitle = title;
         mDescription = description;
         mInfo = info;
@@ -22,6 +23,7 @@ public class Poi {
         mTrail = trail;
         mFav = false;
         mCoords = coords;
+        mId = id;
 
         mImages.add(MapsActivity.getResId(mImage, R.drawable.class));
     }
@@ -54,6 +56,12 @@ public class Poi {
 
     public LatLng getCoords() {
         return mCoords;
+    }
+
+    public int getId() {return mId;}
+
+    public void changeFav(){
+        mFav = !mFav;
     }
 
 }

@@ -2,10 +2,12 @@ package com.example.glitsapp20;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -14,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class TrailInfoActivity extends Activity{
+public class TrailInfoActivity extends Activity implements rvPoiAdapter.ItemClickListener{
 
     ConstraintLayout myLayout;
     rvRockAdapter rockAdapter;
@@ -27,6 +29,20 @@ public class TrailInfoActivity extends Activity{
         myLayout = (ConstraintLayout) findViewById(R.id.trail_info_activity);
         initTrailInfo(MapsActivity.getTrail(), myLayout);
         initRVs(myLayout, this, MapsActivity.getTrail());
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        TextView tv = view.findViewById(R.id.poi_title);
+        String name = tv.getText().toString();
+
+        for(int i = 0; i<MapsActivity.poiList.size(); i++) {
+            if (MapsActivity.poiList.get(i).getTitle() == name)
+                MapsActivity.poiToPass = MapsActivity.poiList.get(i).getId();
+        }
+
+        Intent pi = new Intent(this, PoiInfoActivity.class);
+        startActivity(pi);
     }
 
     public void initTrailInfo(Trail trail, View view) {
@@ -108,9 +124,9 @@ public class TrailInfoActivity extends Activity{
         RecyclerView poiRV = view.findViewById(R.id.rv_pois);
         poiRV.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         poiAdapter = new rvPoiAdapter(context, poiTitles, poiImages, poiInfo, poiFav);
+        poiAdapter.setClickListener(this);
         poiRV.setAdapter(poiAdapter);
     }
-
 }
 
 
