@@ -12,7 +12,7 @@
            <KeyAttribute
                motion:motionTarget="@+id/trail_image"
                motion:framePosition="100"
-               android:alpha="0" />
+               android:alpha="0.2" />
        </KeyFrameSet>
         <OnSwipe
             motion:touchAnchorId="@+id/trailCard"

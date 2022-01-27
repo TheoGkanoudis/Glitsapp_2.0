@@ -22,9 +22,9 @@
 
                 <ImageView
                     android:id="@+id/poi_image"
-                    android:layout_width="158dp"
-                    android:layout_height="158dp"
-                    android:background="@drawable/ic_launcher_background"/>
+                    android:layout_width="159dp"
+                    android:layout_height="159dp"
+                    android:background="@drawable/grizas"/>
 
                 <LinearLayout
                     android:layout_marginHorizontal="15dp"

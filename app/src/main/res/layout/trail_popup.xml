@@ -24,7 +24,7 @@
                     android:id="@+id/trail_image"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:background="@drawable/ic_launcher_background"/>
+                    android:background="@drawable/grizas"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"

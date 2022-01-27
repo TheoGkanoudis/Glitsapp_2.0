@@ -2,11 +2,14 @@ package com.example.glitsapp20;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
+
 public class Poi {
     private  String mTitle;
     private  String mDescription;
     private  String mInfo;
     private String mImage;
+    private ArrayList<Integer> mImages = new ArrayList<>();
     private LatLng mCoords;
     private int mTrail;
     private boolean mFav;
@@ -19,6 +22,8 @@ public class Poi {
         mTrail = trail;
         mFav = false;
         mCoords = coords;
+
+        mImages.add(MapsActivity.getResId(mImage, R.drawable.class));
     }
 
     public String getTitle() {
@@ -36,6 +41,8 @@ public class Poi {
     public  String getImage(){
         return mImage;
     }
+
+    public ArrayList<Integer> getImages() { return mImages; }
 
     public int getTrail(){
         return  mTrail;

@@ -43,7 +43,7 @@ public class TrailPopup extends MapsActivity{
 
         ImageView ivImage = (ImageView) myLayout.findViewById(R.id.trail_image);
         if(image!=null){
-            resID = getResId(image, R.drawable.class);
+            resID = getResId(image+"_thumb", R.drawable.class);
             ivImage.setImageResource(resID);
         }
 

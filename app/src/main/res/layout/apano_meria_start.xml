@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/logoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            app:srcCompat="@drawable/logo" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/apanwscrollview"
+        android:layout_width="410dp"
+        android:layout_height="601dp"
+        android:layout_marginTop="1dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logoLayout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <View
+                android:layout_width="250dp"
+                android:layout_height="1dp"
+                android:layout_marginLeft="20dp"
+                android:background="#424242">
+
+            </View>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:text="Απάνω Μεριά"
+                android:textColor="#0E0E0E"
+                android:textSize="30dp"
+                android:textStyle="bold">
+
+            </TextView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="85dp"
+                    android:layout_height="85dp"
+                    android:layout_marginLeft="20dp"
+                    app:srcCompat="@drawable/ic_launcher_background"
+                    />
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="85dp"
+                    android:layout_height="85dp"
+                    android:layout_marginLeft="10dp"
+                    app:srcCompat="@drawable/ic_launcher_background"
+                    />
+
+                <ImageView
+                    android:id="@+id/imageView4"
+                    android:layout_width="85dp"
+                    android:layout_height="85dp"
+                    android:layout_marginLeft="10dp"
+                    app:srcCompat="@drawable/ic_launcher_background"
+                    />
+
+                <ImageView
+                    android:id="@+id/imageView5"
+                    android:layout_width="85dp"
+                    android:layout_height="85dp"
+                    android:layout_marginLeft="10dp"
+                    app:srcCompat="@drawable/ic_launcher_background"
+                    >
+
+                </ImageView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+
+                <ImageView
+                    android:id="@+id/imageView6"
+                    android:layout_width="85dp"
+                    android:layout_height="85dp"
+                    android:layout_marginLeft="20dp"
+                    app:srcCompat="@drawable/ic_launcher_background"
+                    >
+
+                </ImageView>
+
+                <ImageView
+                    android:id="@+id/imageView7"
+                    android:layout_width="85dp"
+                    android:layout_height="85dp"
+                    android:layout_marginLeft="10dp"
+                    app:srcCompat="@drawable/ic_launcher_background"
+                    />
+
+                <ImageView
+                    android:id="@+id/imageView8"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    app:srcCompat="@drawable/ic_launcher_background"
+                    />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Γενικά"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="20dp"
+                    android:textColor="#0E0E0E"
+                    android:textSize="30dp"
+                    android:textStyle="bold">
+
+                </TextView>
+
+                <View
+                    android:layout_width="250dp"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="38dp"
+                    android:background="#424242">
+
+                </View>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="20dp"
+                    android:text="Η Απάνω Μεριά αφορά όλο το βόρειο τμήμα της Σύρου  και αποτελεί περίπου το 45% της συνολικής έκτασης του νησιού. Η περιοχή χαρακτηρίζεται κατά κύριο λόγο από βραχώδεις απόκρημνους λόφους που καλύπτονται από φρύγανα, ενώ η ακτογραμμή είναι βραχώδης και απόκρημνη περιλαμβάνοντας όμως και μία σειρά από παραλίες ιδιαίτερου φυσικού κάλους. Το οδικό δίκτυο της περιοχής εκτείνεται μόνο στις ορεινές περιοχές, χωρίς να δίνει οδική πρόσβαση στις παραλίες. Από το σημείο που σταματά ο δρόμος ξεκινούν τα 5 κύρια μονοπάτια πεζοπορίας για τις παραλίες Γρίζας, Γράμματα, Μαρμάρι, Λία και Διαπόρι. Το τελευταίο δεν καταλήγει σε παραλία αλλά προσφέρει στους επισκέπτες ένα πανέμορφο τοπίο."
+                    android:textSize="16sp"></TextView>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="20dp"
+                android:text="Στην Απάνω Μεριά της Σύρου περιλαμβάνονται περιοχές με έντονο γεωλογικό ενδιαφέρον, γιατί θεωρούνται ως η πιο αντιπροσωπευτική τοποθεσία κυανοσχιστόλιθων και εκλογιτών στον κόσμο, με αποτέλεσμα τα τελευταία χρόνια να την επισκέπτονται αρκετές ομάδες επισκεπτών ειδικών επιστημόνων και φοιτητών από όλο τον κόσμο."
+                android:textSize="16sp">
+
+            </TextView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Πετρώματα"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="20dp"
+                    android:textColor="#0E0E0E"
+                    android:textSize="30dp"
+                    android:textStyle="bold">
+
+                </TextView>
+
+                <View
+                    android:layout_width="178dp"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="38dp"
+                    android:background="#424242">
+
+                </View>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <ImageView
+                    android:id="@+id/imageView9"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:srcCompat="@drawable/ic_launcher_background"
+                    android:layout_marginLeft="20dp"
+
+                    />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="Εκλογίτης"
+                        android:textColor="#070707"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="Μεταμορφωμένο πέτρωμα σκούρου πράσινου και μπλε χρώματος. Αποτελέιται κυρίως από ομφακίτη και γρανάτες. Το κατάλληλο μονοπάτι για παρατήρηση εκλογήτη είναι αυτό που οδηγεί στην παραλία Λία."
+                        android:textColor="#494949"
+                        android:textSize="13sp" />
+                </LinearLayout>>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <ImageView
+                    android:id="@+id/imageView10"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:srcCompat="@drawable/ic_launcher_background"
+                    android:layout_marginLeft="20dp"
+
+                    />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:text="Μεταγάββρος"
+                        android:textColor="#070707"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="Πυριγενές μεταμορφωμένο πέτρωμα. Έχει χρώμα ανοιχτόχρωμο, κυρίως λευκό και περιέχει κρυστάλλους ομφακίτη, πράσινοι κρύσταλλοι διάφορων μεγεθών."
+                        android:textColor="#494949"
+                        android:textSize="13sp" />
+                </LinearLayout>>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <ImageView
+                    android:id="@+id/imageView11"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:srcCompat="@drawable/ic_launcher_background"
+                    android:layout_marginLeft="20dp"
+
+                    />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="25dp"
+                        android:text="Μάρμαρο"
+                        android:textColor="#070707"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="Επίσης πέτρωμα που υπάρχει σε αυθονία στη Σύρο τόσο στην εξοχή όσο και στην πόλη."                        android:textColor="#494949"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="100dp">
+
+                <ImageView
+                    android:id="@+id/imageView12"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:srcCompat="@drawable/ic_launcher_background"
+                    android:layout_marginLeft="20dp"
+
+                    />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="8dp"
+                        android:text="Σχιστόλιθος"
+                        android:textColor="#070707"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="Ιζηματογενές μεταμορφωμένο πέτρωμα που βρίσκεται σε αυθονία στη Σύρο. Έχει χρώμα σκούρο γκρι, μαυρο, καφε, και σπάει εύκολα κατά μήκος των επιπέδων του."
+                        android:textColor="#494949"
+                        android:textSize="13sp" />
+                </LinearLayout>>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

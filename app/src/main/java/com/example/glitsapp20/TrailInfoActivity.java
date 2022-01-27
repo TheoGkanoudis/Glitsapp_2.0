@@ -36,8 +36,6 @@ public class TrailInfoActivity extends Activity{
         String time = trail.getTime();
         int difficulty = trail.getDifficulty();
 
-
-
         int resID = 0;
 
         TextView tvName = view.findViewById(R.id.trail_name);
@@ -74,9 +72,11 @@ public class TrailInfoActivity extends Activity{
 
     public void initRVs(View view, Context context, Trail trail){
 
+        //for the rocks recyclerView
         char[] rocks = trail.getRocks();
         int[] rockImages = new int[rocks.length];
         ArrayList<String> mRocks = new ArrayList<>();
+
         for(int i =0; i<rocks.length; i++){
             if(rocks[i]=='g'){mRocks.add("Μετα-Γάββρος"); rockImages[i]=MapsActivity.getResId("metababbro", R.drawable.class);}
             else if(rocks[i]=='m'){mRocks.add("Μάρμαρο"); rockImages[i]=MapsActivity.getResId("marble", R.drawable.class);}
@@ -89,6 +89,7 @@ public class TrailInfoActivity extends Activity{
         rockAdapter = new rvRockAdapter(context, mRocks, rockImages);
         rocksRV.setAdapter(rockAdapter);
 
+        //for the POI recyclerView
         ArrayList<String> poiTitles = MapsActivity.getPoiTitles(trail);
         int[] poiImages = new int[poiTitles.size()];
         ArrayList<String> poiInfo = new ArrayList<>();

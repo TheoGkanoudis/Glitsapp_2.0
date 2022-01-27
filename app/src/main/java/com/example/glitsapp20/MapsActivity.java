@@ -81,6 +81,7 @@ public class MapsActivity extends FragmentActivity
     public static ArrayList<Poi> poiList = new ArrayList<>();
     public static ArrayList<Trail> trailList = new ArrayList<>();
     public static int trailToPass;
+    public static int poiToPass;
 
     ArrayList<Polyline> polylines = new ArrayList<>();
     ArrayList<Marker> markers = new ArrayList<>();
@@ -214,6 +215,7 @@ public class MapsActivity extends FragmentActivity
         else{
             mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
         }
+        poiToPass = Integer.parseInt(marker.getTitle());
         TrailPopup.hideTrailPopup(mainLayout);
         markersAlpha();
         marker.setAlpha(1);
@@ -551,14 +553,24 @@ public class MapsActivity extends FragmentActivity
 
     private void setOnClickListeners() {
 
-        Intent i = new Intent(mContext, TrailInfoActivity.class);
+        Intent ti = new Intent(mContext, TrailInfoActivity.class);
         View trailPopup = mainLayout.findViewById(R.id.trail_popup);
 
         trailPopup.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 trailToPass = trailSelected;
-                startActivity(i);
+                startActivity(ti);
+            }
+        });
+
+        Intent pi = new Intent(mContext, PoiInfoActivity.class);
+        View poiPopup = mainLayout.findViewById(R.id.poi_popup);
+
+        poiPopup.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                startActivity(pi);
             }
         });
     }
@@ -568,6 +580,8 @@ public class MapsActivity extends FragmentActivity
     public static Trail getTrail(){
         return trailList.get(trailToPass);
     }
+
+    public static Poi getPoi() {return  poiList.get(poiToPass);}
 
     public static ArrayList<String> getPoiTitles(Trail trail){
         ArrayList<String> titles = new ArrayList<>();
