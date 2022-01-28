@@ -78,4 +78,5 @@ public class PoiInfoActivity extends Activity {
         photoAdapter = new rvPhotoAdapter(context, mPhotos);
         photosRV.setAdapter(photoAdapter);
     }
+
 }

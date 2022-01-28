@@ -1,11 +1,13 @@
 package com.example.glitsapp20;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -47,7 +49,8 @@ public class rvPoiAdapter extends RecyclerView.Adapter<rvPoiAdapter.ViewHolder> 
         String info = mInfo.get(position);
         holder.poiInfo.setText(info);
         boolean fav = mFav[position];
-        if(fav){holder.poiFav.setImageResource(R.drawable.fav_filled);}
+        if(fav)holder.poiFav.setImageResource(R.drawable.fav_filled);
+        else holder.poiFav.setImageResource(R.drawable.fav_empty);
     }
 
     // total number of rows
@@ -70,6 +73,13 @@ public class rvPoiAdapter extends RecyclerView.Adapter<rvPoiAdapter.ViewHolder> 
             poiImage = itemView.findViewById(R.id.poi_image);
             poiInfo = itemView.findViewById(R.id.poi_info);
             poiFav = itemView.findViewById(R.id.poi_fav);
+
+            poiFav.setOnClickListener(new View.OnClickListener(){
+                public void onClick(View v){
+                    mFav[getAdapterPosition()]=!mFav[getAdapterPosition()];
+                    TrailInfoActivity.changeFav(poiTitle.getText().toString(), getAdapterPosition());
+                }
+            });
 
             itemView.setOnClickListener(this);
         }

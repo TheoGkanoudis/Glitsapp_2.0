@@ -49,7 +49,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/pull" />
+                    android:src="@drawable/pull" />\
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/trail_fav"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/trail_name"
+                        app:layout_constraintBottom_toBottomOf="@id/trail_name"
+                        android:background="@drawable/fav_empty"/>
 
                 <TextView
                     android:layout_marginVertical="10dp"
@@ -59,7 +73,13 @@
                     android:text="Path Title"
                     android:textColor="@color/teal_700"
                     android:textSize="30sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:layout_marginStart="10dp"
+                    app:layout_constraintStart_toEndOf="@id/trail_fav"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"

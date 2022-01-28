@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 
+import android.opengl.Visibility;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -48,6 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static android.view.View.GONE;
 
 
 public class MapsActivity extends FragmentActivity
@@ -113,11 +115,6 @@ public class MapsActivity extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
-        if (savedInstanceState != null) {
-            lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
-            cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
-            userLocation = lastKnownLocation;
-        }
 
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -255,6 +252,13 @@ public class MapsActivity extends FragmentActivity
     @Override
     public void onMapLongClick(@NonNull LatLng latLng) {
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        TrailPopup.refreshPopup(mainLayout);
+        PoiPopup.refreshPopup(mainLayout);
     }
 
     // LOCATION //
@@ -468,7 +472,7 @@ public class MapsActivity extends FragmentActivity
             TrailPopup.showTrailPopup(trailSelected, mainLayout);
         }
         else {
-            if(mainLayout.findViewById(R.id.poi_popup).getVisibility()==View.GONE) {
+            if(mainLayout.findViewById(R.id.poi_popup).getVisibility()== GONE) {
                 polyline.setWidth(PATH_UNSELECTED_W);
                 TrailPopup.hideTrailPopup(mainLayout);
                 trailSelected = -1;

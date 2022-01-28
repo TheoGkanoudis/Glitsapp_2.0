@@ -1,12 +1,9 @@
 package com.example.glitsapp20;
 
-import android.content.Intent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import java.lang.reflect.Field;
 
 
 public class TrailPopup extends MapsActivity{
@@ -14,7 +11,7 @@ public class TrailPopup extends MapsActivity{
 
     public static void showTrailPopup(int item, RelativeLayout mainLayout){
         Trail trail = trailList.get(item);
-        renderPopup(trail, mainLayout);
+        initTrailPopup(trail, mainLayout);
     }
 
     public static void hideTrailPopup(RelativeLayout mainLayout){
@@ -23,7 +20,7 @@ public class TrailPopup extends MapsActivity{
         layout.setVisibility(View.GONE);
     }
 
-    private static void renderPopup(Trail trail, RelativeLayout mainLayout){
+    private static void initTrailPopup(Trail trail, RelativeLayout mainLayout){
 
         View myLayout = mainLayout.findViewById(R.id.trail_popup);
 
@@ -56,13 +53,31 @@ public class TrailPopup extends MapsActivity{
         ivDifficulty.setImageResource(difficulty);
 
         ImageView ivFav = (ImageView) myLayout.findViewById(R.id.trail_fav);
-        if(image!=null && fav){
+        if(fav){
             resID = getResId("fav_filled", R.drawable.class);
-            ivFav.setImageResource(resID);
         }
+        else{
+            resID = getResId("fav_empty", R.drawable.class);
+        }
+        ivFav.setImageResource(resID);
+
+        ivFav.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                trail.changeFav();
+                initTrailPopup(trail, mainLayout);
+            }
+        });
 
         RelativeLayout popup = myLayout.findViewById(R.id.trail_popup);
         popup.setVisibility(View.VISIBLE);
     }
 
+    public static void refreshPopup(RelativeLayout mainLayout){
+        View myLayout = mainLayout.findViewById(R.id.trail_popup);
+        RelativeLayout popup = myLayout.findViewById(R.id.trail_popup);
+        if(popup.getVisibility()==View.VISIBLE) {
+            Trail trail = MapsActivity.getTrail();
+            initTrailPopup(trail, mainLayout);
+        }
+    }
 }

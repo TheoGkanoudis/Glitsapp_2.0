@@ -94,4 +94,9 @@ public class Trail {
     public int getId() {
         return  mId;
     }
+
+    public void changeFav(){
+        mFav = !mFav;
+    }
+
 }

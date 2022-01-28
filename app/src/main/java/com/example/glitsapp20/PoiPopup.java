@@ -7,6 +7,8 @@ import android.widget.TextView;
 
 import java.lang.reflect.Field;
 
+import static android.view.View.VISIBLE;
+
 public class PoiPopup extends MapsActivity{
 
     public static void showPoiPopup(int item, RelativeLayout mainLayout){
@@ -63,7 +65,15 @@ public class PoiPopup extends MapsActivity{
         });
 
         RelativeLayout popup = myLayout.findViewById(R.id.poi_popup);
-        popup.setVisibility(View.VISIBLE);
+        popup.setVisibility(VISIBLE);
     }
 
+    public static void refreshPopup(RelativeLayout mainLayout){
+        View myLayout = mainLayout.findViewById(R.id.poi_popup);
+        RelativeLayout popup = myLayout.findViewById(R.id.poi_popup);
+        if(popup.getVisibility()==VISIBLE) {
+            Poi poi = MapsActivity.getPoi();
+            initPoiPopup(poi, mainLayout);
+        }
+    }
 }

@@ -20,7 +20,7 @@ public class TrailInfoActivity extends Activity implements rvPoiAdapter.ItemClic
 
     ConstraintLayout myLayout;
     rvRockAdapter rockAdapter;
-    rvPoiAdapter poiAdapter;
+    static rvPoiAdapter poiAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,6 +50,7 @@ public class TrailInfoActivity extends Activity implements rvPoiAdapter.ItemClic
         String image = trail.getImage();
         String info = trail.getInfo();
         String time = trail.getTime();
+        boolean fav = trail.getFav();
         int difficulty = trail.getDifficulty();
 
         int resID = 0;
@@ -82,6 +83,22 @@ public class TrailInfoActivity extends Activity implements rvPoiAdapter.ItemClic
         ivBack.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 finish();
+            }
+        });
+
+        ImageView ivFav = (ImageView) myLayout.findViewById(R.id.trail_fav);
+        if(fav){
+            resID = MapsActivity.getResId("fav_filled", R.drawable.class);
+        }
+        else{
+            resID = MapsActivity.getResId("fav_empty", R.drawable.class);
+        }
+        ivFav.setImageResource(resID);
+
+        ivFav.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                trail.changeFav();
+                initTrailInfo(trail, view);
             }
         });
     }
@@ -126,6 +143,15 @@ public class TrailInfoActivity extends Activity implements rvPoiAdapter.ItemClic
         poiAdapter = new rvPoiAdapter(context, poiTitles, poiImages, poiInfo, poiFav);
         poiAdapter.setClickListener(this);
         poiRV.setAdapter(poiAdapter);
+    }
+
+    public static void changeFav(String poiTitle, int position){
+        for (Poi poi : MapsActivity.poiList) {
+            if(poi.getTitle()==poiTitle){
+                poi.changeFav();
+            }
+        }
+        poiAdapter.notifyItemChanged(position);
     }
 }
 
