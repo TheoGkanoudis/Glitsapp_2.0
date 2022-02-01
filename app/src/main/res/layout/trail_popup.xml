@@ -95,7 +95,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:text="Δυσκολία:"
-                        android:textColor="@color/teal_700"
+                        android:textColor="?colorSecondary"
                         android:textStyle="bold"
                         android:textSize="14sp" />
 

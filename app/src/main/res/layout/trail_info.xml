@@ -71,7 +71,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Path Title"
-                    android:textColor="@color/teal_700"
+                    android:textColor="?colorSecondary"
                     android:textSize="30sp"
                     android:textStyle="bold"
                     android:layout_marginStart="10dp"
@@ -112,7 +112,7 @@
                         android:layout_gravity="end"
                         android:layout_marginEnd="20dp"
                         android:text="Δυσκολία:"
-                        android:textColor="@color/teal_700"
+                        android:textColor="?colorSecondary"
                         android:textSize="18sp"
                         app:layout_constraintEnd_toStartOf="@id/trail_difficulty"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -153,7 +153,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginVertical="10dp"
                                 android:text="Κύρια πετρώματα:"
-                                android:textColor="@color/teal_700"
+                                android:textColor="?colorSecondary"
                                 android:textSize="18sp"
                                 android:textStyle="bold" />
 
@@ -180,7 +180,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginVertical="10dp"
                                 android:text="Πληροφορίες:"
-                                android:textColor="@color/teal_700"
+                                android:textColor="?colorSecondary"
                                 android:textSize="18sp"
                                 android:textStyle="bold" />
 
@@ -199,7 +199,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginVertical="10dp"
                                 android:text="Σημεία Ενδιαφέροντος:"
-                                android:textColor="@color/teal_700"
+                                android:textColor="?colorSecondary"
                                 android:textSize="18sp"
                                 android:textStyle="bold" />
 
