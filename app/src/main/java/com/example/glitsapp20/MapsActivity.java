@@ -1,6 +1,7 @@
 package com.example.glitsapp20;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -18,6 +19,7 @@ import android.os.Bundle;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -92,7 +94,7 @@ public class MapsActivity extends FragmentActivity
     LatLng apanoMeria = new LatLng(37.49913, 24.907264);
     LatLng cameraPosition = apanoMeria;
     Location userLocation;
-    RelativeLayout mainLayout;
+    ConstraintLayout mainLayout;
 
     // FINALS //
 
@@ -117,14 +119,11 @@ public class MapsActivity extends FragmentActivity
         mContext = this;
 
         setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        poisFromJson();
-        trailsFromJson();
 
-        mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
+        mainLayout = (ConstraintLayout) findViewById(R.id.main_layout);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -309,55 +308,6 @@ public class MapsActivity extends FragmentActivity
 
     // PATHS //
 
-    private void trailsFromJson(){
-
-        try {
-            JSONObject trail = new JSONObject(jsonFromAssets("trails.json"));
-            JSONArray trailArray = trail.getJSONArray("features");
-
-            //new
-            String name;
-            String info;
-            String image;
-            int difficulty;
-            int time;
-
-            for (int i = 0; i < trailArray.length(); i++) {
-                JSONObject trailData = trailArray.getJSONObject(i);
-
-                name = trailData.getString("name");
-                info = trailData.getString("info");
-                image = trailData.getString("image");
-                difficulty = trailData.getInt("difficulty");
-                time = trailData.getInt("time");
-
-                JSONArray rockArray = trailData.getJSONArray("rocks");
-                JSONArray coordsArray = trailData.getJSONArray("coordinates");
-
-                char[] rocks= new char[rockArray.length()];
-                for (int j = 0; j < rockArray.length(); j++) {
-                    rocks[j] = rockArray.getString(j).charAt(0);
-                }
-
-                JSONArray coordsDoubleArray;
-                LatLng currentCoords;
-                LatLng[] path = new LatLng[coordsArray.length()];
-
-                for (int j = 0; j < coordsArray.length(); j++) {
-                    coordsDoubleArray = coordsArray.getJSONArray(j);
-                    currentCoords = new LatLng(coordsDoubleArray.getDouble(1), coordsDoubleArray.getDouble(0));
-                    path[j] = currentCoords;
-                }
-
-                Trail currentTrail = new Trail(name, info, image, difficulty, time, rocks, path, i);
-                trailList.add(currentTrail);
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void drawPaths() {
         List<LatLng> list = new ArrayList<>();
         Polyline polyline;
@@ -377,37 +327,6 @@ public class MapsActivity extends FragmentActivity
     }
 
     // POIS //
-
-    private void poisFromJson(){
-        String title;
-        String description;
-        String info;
-        String image;
-        LatLng coords;
-        int trail;
-
-        try {
-            JSONObject poi = new JSONObject(jsonFromAssets("pois.json"));
-            JSONArray poiArray = poi.getJSONArray("points");
-
-            for (int i = 0; i < poiArray.length(); i++) {
-                JSONObject itemData = poiArray.getJSONObject(i);
-
-                title = itemData.getString("title");
-                description = itemData.getString("description");
-                info = itemData.getString("info");
-                image = itemData.getString("image");
-                trail = itemData.getInt("trail");
-                coords = new LatLng(itemData.getJSONArray("coordinates").getDouble(1),itemData.getJSONArray("coordinates").getDouble(0));
-
-                Poi currentPoi = new Poi(title, description, info, image, trail, coords, i);
-                poiList.add(currentPoi);
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
     private void drawMarkers() {
         Marker marker;
@@ -520,23 +439,6 @@ public class MapsActivity extends FragmentActivity
 
     // OPERATIONAL //
 
-    private String jsonFromAssets(String fileName) {
-        String json = null;
-        try {
-            InputStream is = getAssets().open(fileName);
-            int size = is.available();
-            byte[] bufferData = new byte[size];
-            is.read(bufferData);
-            is.close();
-            json = new String(bufferData, "UTF-8");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return json;
-    }
-
     private void showMissingPermissionError() {
         PermissionUtils.PermissionDeniedDialog
                 .newInstance(true).show(getSupportFragmentManager(), "dialog");
@@ -575,6 +477,14 @@ public class MapsActivity extends FragmentActivity
             @Override
             public void onClick(View view) {
                 startActivity(pi);
+            }
+        });
+
+        ImageView home = mainLayout.findViewById(R.id.home_icon);
+        home.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                finish();
             }
         });
     }

@@ -32,5 +32,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/logo"/>
 
+        <ImageView
+            android:id="@+id/map_icon"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:padding="12dp"
+            android:src="@drawable/map"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintBottom_toBottomOf="@id/logo"
+            app:layout_constraintEnd_toStartOf="@id/menu_icon"
+            app:layout_constraintTop_toTopOf="@id/logo"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.appcompat.widget.Toolbar>

@@ -1,48 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/trail_item"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="wrap_content"
-    android:layout_width="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-<androidx.cardview.widget.CardView
-    android:id="@+id/cv_image"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="30dp">
+    android:id="@+id/trail_item"
+    android:layout_width="wrap_content"
+    android:layout_height="375dp"
+    android:layout_marginEnd="10dp">
 
-    <ImageView
-        android:id="@+id/trail_image"
-        android:layout_width="240dp"
-        android:layout_height="360dp"
-        android:background="@drawable/grizas"/>
+    <androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cv_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/trail_image"
+            android:layout_width="240dp"
+            android:layout_height="360dp"
+            android:background="@drawable/grizas" />
 
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-        android:layout_marginBottom="-8dp"
-        android:layout_marginStart="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="@id/cv_image"
         app:layout_constraintStart_toStartOf="@id/cv_image"
-        android:layout_width="wrap_content"
-        app:cardCornerRadius="10dp"
-        android:layout_height="wrap_content">
+        android:translationX="8dp"
+        android:translationY="8dp">
 
         <TextView
             android:id="@+id/trail_name"
-            android:background="@color/teal_300"
-            android:textColor="?colorSecondary"
-            android:paddingHorizontal="7dp"
-            android:paddingVertical="3dp"
-            android:textSize="24sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Trail Name"/>
+            android:background="?android:fillColor"
+            android:paddingHorizontal="7dp"
+            android:paddingVertical="3dp"
+            android:text="Trail Name"
+            android:textColor="?colorSecondary"
+            android:textSize="24sp" />
 
     </androidx.cardview.widget.CardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

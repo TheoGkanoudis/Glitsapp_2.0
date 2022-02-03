@@ -5,24 +5,26 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import java.lang.reflect.Field;
 
 import static android.view.View.VISIBLE;
 
 public class PoiPopup extends MapsActivity{
 
-    public static void showPoiPopup(int item, RelativeLayout mainLayout){
+    public static void showPoiPopup(int item, ConstraintLayout mainLayout){
         Poi poi = poiList.get(item);
         initPoiPopup(poi, mainLayout);
     }
 
-    public static void hidePoiPopup(RelativeLayout mainLayout){
+    public static void hidePoiPopup(ConstraintLayout mainLayout){
         View myLayout = mainLayout.findViewById(R.id.poi_popup);
         RelativeLayout layout = myLayout.findViewById(R.id.poi_popup);
         layout.setVisibility(View.GONE);
     }
 
-    private static void initPoiPopup(Poi item, RelativeLayout mainLayout){
+    private static void initPoiPopup(Poi item, ConstraintLayout mainLayout){
 
         View myLayout = mainLayout.findViewById(R.id.poi_popup);
 
@@ -68,7 +70,7 @@ public class PoiPopup extends MapsActivity{
         popup.setVisibility(VISIBLE);
     }
 
-    public static void refreshPopup(RelativeLayout mainLayout){
+    public static void refreshPopup(ConstraintLayout mainLayout){
         View myLayout = mainLayout.findViewById(R.id.poi_popup);
         RelativeLayout popup = myLayout.findViewById(R.id.poi_popup);
         if(popup.getVisibility()==VISIBLE) {

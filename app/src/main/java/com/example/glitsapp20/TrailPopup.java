@@ -5,22 +5,24 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 
 public class TrailPopup extends MapsActivity{
 
 
-    public static void showTrailPopup(int item, RelativeLayout mainLayout){
+    public static void showTrailPopup(int item, ConstraintLayout mainLayout){
         Trail trail = trailList.get(item);
         initTrailPopup(trail, mainLayout);
     }
 
-    public static void hideTrailPopup(RelativeLayout mainLayout){
+    public static void hideTrailPopup(ConstraintLayout mainLayout){
         View myLayout = mainLayout.findViewById(R.id.trail_popup);
         RelativeLayout layout = myLayout.findViewById(R.id.trail_popup);
         layout.setVisibility(View.GONE);
     }
 
-    private static void initTrailPopup(Trail trail, RelativeLayout mainLayout){
+    private static void initTrailPopup(Trail trail, ConstraintLayout mainLayout){
 
         View myLayout = mainLayout.findViewById(R.id.trail_popup);
 
@@ -72,7 +74,7 @@ public class TrailPopup extends MapsActivity{
         popup.setVisibility(View.VISIBLE);
     }
 
-    public static void refreshPopup(RelativeLayout mainLayout){
+    public static void refreshPopup(ConstraintLayout mainLayout){
         View myLayout = mainLayout.findViewById(R.id.trail_popup);
         RelativeLayout popup = myLayout.findViewById(R.id.trail_popup);
         if(popup.getVisibility()==View.VISIBLE) {

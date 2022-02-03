@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    android:id="@+id/main_layout"
+<androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/main_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="bottom"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
     <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
+        map:layout_constraintTop_toTopOf="parent"
+        map:layout_constraintStart_toStartOf="parent"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -21,13 +23,27 @@
         layout="@layout/poi_popup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         android:layout_marginBottom="-25dp"/>
 
     <include
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:id="@+id/trail_popup"
         layout="@layout/trail_popup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="-25dp"/>
 
-</RelativeLayout>
+    <ImageView
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/trail_popup"
+        android:id="@+id/home_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:padding="5dp"
+        android:src="@drawable/home"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
