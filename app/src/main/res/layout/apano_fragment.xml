@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/apano_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:colorBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_marginBottom="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="10dp"
+                    android:text="Απάνω Μεριά:"
+                    android:textColor="?colorSecondary"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="87dp"
+                    android:layout_marginBottom="3dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="3dp"
+                        android:layout_weight="1"
+                        app:srcCompat="@drawable/tapa" />
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="3dp"
+                        android:layout_weight="1"
+                        app:srcCompat="@drawable/tapb" />
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="3dp"
+                        android:layout_weight="1"
+                        app:srcCompat="@drawable/tapc" />
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        app:srcCompat="@drawable/tapd" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="87dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="3dp"
+                        android:layout_weight="1"
+                        app:srcCompat="@drawable/tape" />
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="3dp"
+                        android:layout_weight="1"
+                        app:srcCompat="@drawable/tapf" />
+
+                    <ImageView
+                        android:layout_width="3dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        app:srcCompat="@drawable/long_img" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="10dp"
+                    android:text="Γενικά:"
+                    android:textColor="?colorSecondary"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="Η Απάνω Μεριά αφορά όλο το βόρειο τμήμα της Σύρου  και αποτελεί περίπου το 45% της συνολικής έκτασης του νησιού. Η περιοχή χαρακτηρίζεται κατά κύριο λόγο από βραχώδεις απόκρημνους λόφους που καλύπτονται από φρύγανα, ενώ η ακτογραμμή είναι βραχώδης και απόκρημνη περιλαμβάνοντας όμως και μία σειρά από παραλίες ιδιαίτερου φυσικού κάλους. Το οδικό δίκτυο της περιοχής εκτείνεται μόνο στις ορεινές περιοχές, χωρίς να δίνει οδική πρόσβαση στις παραλίες. Από το σημείο που σταματά ο δρόμος ξεκινούν τα 5 κύρια μονοπάτια πεζοπορίας για τις παραλίες Γρίζας, Γράμματα, Μαρμάρι, Λία και Διαπόρι. Το τελευταίο δεν καταλήγει σε παραλία αλλά προσφέρει στους επισκέπτες ένα πανέμορφο τοπίο."
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Στην Απάνω Μεριά της Σύρου περιλαμβάνονται περιοχές με έντονο γεωλογικό ενδιαφέρον, γιατί θεωρούνται ως η πιο αντιπροσωπευτική τοποθεσία κυανοσχιστόλιθων και εκλογιτών στον κόσμο, με αποτέλεσμα τα τελευταία χρόνια να την επισκέπτονται αρκετές ομάδες επισκεπτών ειδικών επιστημόνων και φοιτητών από όλο τον κόσμο."
+                    android:textColor="@color/black"
+                    android:textSize="18sp">
+
+                </TextView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="10dp"
+                    android:text="Πετρώματα:"
+                    android:textColor="?colorSecondary"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:outlineAmbientShadowColor="?android:colorBackground"
+                        android:outlineSpotShadowColor="?android:colorBackground"
+                        app:cardCornerRadius="15dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="?android:fillColor"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="120dp"
+                                android:layout_height="120dp"
+                                android:background="@drawable/eclogite" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="5dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Εκλογίτης"
+                                    android:textColor="@android:color/black"
+                                    android:textSize="17.5sp"
+                                    android:textStyle="bold" />
+
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="5dp"
+                                    android:text="Μεταμορφωμένο πέτρωμα σκούρου πράσινου και μπλε χρώματος. Αποτελέιται κυρίως από ομφακίτη και γρανάτες. Το κατάλληλο μονοπάτι για παρατήρηση εκλογήτη είναι αυτό που οδηγεί στην παραλία Λία."
+                                    android:textColor="@android:color/black"
+                                    android:textSize="11.8sp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:outlineAmbientShadowColor="?android:colorBackground"
+                        android:outlineSpotShadowColor="?android:colorBackground"
+                        app:cardCornerRadius="15dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="?android:fillColor"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="120dp"
+                                android:layout_height="120dp"
+                                android:background="@drawable/metagabbro" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="5dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Μεταγάββρος"
+                                    android:textColor="@android:color/black"
+                                    android:textSize="17.5sp"
+                                    android:textStyle="bold" />
+
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="5dp"
+                                    android:text="Πυριγενές μεταμορφωμένο πέτρωμα. Έχει χρώμα ανοιχτόχρωμο, κυρίως λευκό και περιέχει κρυστάλλους ομφακίτη, πράσινοι κρύσταλλοι διάφορων μεγεθών."
+                                    android:textColor="@android:color/black"
+                                    android:textSize="13sp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:outlineAmbientShadowColor="?android:colorBackground"
+                        android:outlineSpotShadowColor="?android:colorBackground"
+                        app:cardCornerRadius="15dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="?android:fillColor"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="120dp"
+                                android:layout_height="120dp"
+                                android:background="@drawable/marble" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="5dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Μάρμαρο"
+                                    android:textColor="@android:color/black"
+                                    android:textSize="17.5sp"
+                                    android:textStyle="bold" />
+
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="5dp"
+                                    android:text="Πέτρωμα που υπάρχει σε αυθονία στη Σύρο τόσο στην εξοχή όσο και στην πόλη."
+                                    android:textColor="@android:color/black"
+                                    android:textSize="14sp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:outlineAmbientShadowColor="?android:colorBackground"
+                        android:outlineSpotShadowColor="?android:colorBackground"
+                        app:cardCornerRadius="15dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="?android:fillColor"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="120dp"
+                                android:layout_height="120dp"
+                                android:background="@drawable/schist" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="5dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Σχιστόλιθος"
+                                    android:textColor="@android:color/black"
+                                    android:textSize="17.5sp"
+                                    android:textStyle="bold" />
+
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="5dp"
+                                    android:text="Ιζηματογενές μεταμορφωμένο πέτρωμα που βρίσκεται σε αυθονία στη Σύρο. Έχει χρώμα σκούρο γκρι, μαυρο, καφε, και σπάει εύκολα κατά μήκος των επιπέδων του."
+                                    android:textColor="@android:color/black"
+                                    android:textSize="14sp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

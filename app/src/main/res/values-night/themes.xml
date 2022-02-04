@@ -10,7 +10,9 @@
         <item name="colorSecondary">@color/beige_500</item>
         <item name="colorSecondaryVariant">@color/beige_700</item>
         <item name="colorOnSecondary">@color/beige_300</item>
+
         <item name="android:fillColor">@color/teal_500</item>
+        <item name="android:colorSecondary">@color/beige_500_faded</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?colorPrimary</item>
         <!-- Customize your theme here. -->

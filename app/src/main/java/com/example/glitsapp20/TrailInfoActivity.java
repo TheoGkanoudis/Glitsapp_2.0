@@ -32,7 +32,7 @@ public class TrailInfoActivity extends Activity implements rvPoiAdapter.ItemClic
     }
 
     @Override
-    public void onItemClick(View view, int position) {
+    public void onPoiItemClick(View view, int position) {
         TextView tv = view.findViewById(R.id.poi_title);
         String name = tv.getText().toString();
 
@@ -43,6 +43,12 @@ public class TrailInfoActivity extends Activity implements rvPoiAdapter.ItemClic
 
         Intent pi = new Intent(this, PoiInfoActivity.class);
         startActivity(pi);
+    }
+
+    @Override
+    protected void onResume() {
+        initRVs(myLayout,this, MapsActivity.getTrail() );
+        super.onResume();
     }
 
     public void initTrailInfo(Trail trail, View view) {
@@ -145,14 +151,14 @@ public class TrailInfoActivity extends Activity implements rvPoiAdapter.ItemClic
         poiRV.setAdapter(poiAdapter);
     }
 
-    public static void changeFav(String poiTitle, int position){
+    public static void changePoiFav(String poiTitle, int position){
         for (Poi poi : MapsActivity.poiList) {
-            if(poi.getTitle()==poiTitle){
-                poi.changeFav();
-            }
+            if(poi.getTitle()==poiTitle)poi.changeFav();
         }
         poiAdapter.notifyItemChanged(position);
     }
+
+
 }
 
 

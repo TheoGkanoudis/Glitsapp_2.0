@@ -14,11 +14,6 @@
             android:title="Απάνω Μεριά" />
 
         <item
-            android:id="@+id/favs"
-            android:icon="@drawable/favs"
-            android:title="Αγαπημένα" />
-
-        <item
             android:id="@+id/account"
             android:icon="@drawable/account"
             android:title="Λογαριασμός"/>

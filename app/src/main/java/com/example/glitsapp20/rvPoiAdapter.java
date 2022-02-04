@@ -1,7 +1,10 @@
 package com.example.glitsapp20;
 
+import static android.content.Context.ACTIVITY_SERVICE;
+
+
+import android.app.ActivityManager;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,6 +70,7 @@ public class rvPoiAdapter extends RecyclerView.Adapter<rvPoiAdapter.ViewHolder> 
         ImageView poiFav;
 
 
+
         ViewHolder(View itemView) {
             super(itemView);
             poiTitle = itemView.findViewById(R.id.poi_title);
@@ -76,8 +80,9 @@ public class rvPoiAdapter extends RecyclerView.Adapter<rvPoiAdapter.ViewHolder> 
 
             poiFav.setOnClickListener(new View.OnClickListener(){
                 public void onClick(View v){
+                    AccountFragment.refresh();
                     mFav[getAdapterPosition()]=!mFav[getAdapterPosition()];
-                    TrailInfoActivity.changeFav(poiTitle.getText().toString(), getAdapterPosition());
+                    TrailInfoActivity.changePoiFav(poiTitle.getText().toString(), getAdapterPosition());
                 }
             });
 
@@ -86,7 +91,7 @@ public class rvPoiAdapter extends RecyclerView.Adapter<rvPoiAdapter.ViewHolder> 
 
         @Override
         public void onClick(View view) {
-            if(mClickListener!=null) mClickListener.onItemClick(view, getAdapterPosition());
+            if(mClickListener!=null) mClickListener.onPoiItemClick(view, getAdapterPosition());
         }
     }
 
@@ -95,8 +100,9 @@ public class rvPoiAdapter extends RecyclerView.Adapter<rvPoiAdapter.ViewHolder> 
     }
 
     public interface ItemClickListener{
-        void onItemClick(View view, int position);
+        void onPoiItemClick(View view, int position);
     }
+
 
 }
 

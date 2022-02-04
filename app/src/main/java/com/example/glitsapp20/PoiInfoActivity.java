@@ -7,6 +7,7 @@ import android.os.CpuUsageInfo;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -26,6 +27,8 @@ public class PoiInfoActivity extends Activity {
         initPoiInfo(MapsActivity.getPoi(), myLayout);
         initRVs(myLayout, this, MapsActivity.getPoi());
     }
+
+
 
     public void initPoiInfo(Poi poi, View view){
         String title = poi.getTitle();
@@ -78,5 +81,4 @@ public class PoiInfoActivity extends Activity {
         photoAdapter = new rvPhotoAdapter(context, mPhotos);
         photosRV.setAdapter(photoAdapter);
     }
-
 }

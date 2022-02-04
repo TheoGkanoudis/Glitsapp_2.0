@@ -1,10 +1,14 @@
 package com.example.glitsapp20;
 
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.Layout;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -31,22 +35,26 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
     private NavigationView nvDrawer;
+    private static Context context;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.menu_activity);
-
-        if(MapsActivity.poiList.size()==0) {
+        if (MapsActivity.poiList.size() == 0) {
             poisFromJson();
             trailsFromJson();
         }
+
+        setContentView(R.layout.menu_activity);
+        context = this;
+
 
         toolbar = (androidx.appcompat.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -57,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         setupDrawerContent(nvDrawer);
 
         ImageView menu = toolbar.findViewById(R.id.menu_icon);
-        menu.setOnClickListener(new View.OnClickListener(){
+        menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mDrawer.openDrawer(GravityCompat.END);
@@ -65,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ImageView map = toolbar.findViewById(R.id.map_icon);
-        map.setOnClickListener(new View.OnClickListener(){
+        map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getApplicationContext(), MapsActivity.class);
@@ -73,16 +81,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Class fragmentClass;
-        fragmentClass = HomeFragment.class;
-        Fragment fragment = null;
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        selectDrawerItem(null);
     }
 
     @Override
@@ -97,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void selectDrawerItem(MenuItem menuItem) {
+    public void selectDrawerItem(@Nullable MenuItem menuItem) {
 
         // Create a new fragment and specify the fragment to show based on nav item clicked
 
@@ -105,38 +104,36 @@ public class MainActivity extends AppCompatActivity {
 
         Class fragmentClass;
 
-        switch(menuItem.getItemId()) {
-            case R.id.home:
-                fragmentClass = HomeFragment.class;
-                break;
-            /*case R.id.apano_meria:
-                fragmentClass = ApanoActivity.class;
-                break;
-            case R.id.favs:
-                fragmentClass = FavsActivity.class;
-                break;
+        if (menuItem != null) {
+            switch (menuItem.getItemId()) {
+                case R.id.home:
+                    fragmentClass = HomeFragment.class;
+                    break;
+                case R.id.apano_meria:
+                    fragmentClass = ApanoFragment.class;
+                    break;
             case R.id.account:
-                fragmentClass = AccountActivity.class;
+                fragmentClass = AccountFragment.class;
                 break;
-            case R.id.settings:
+            /*case R.id.settings:
                 fragmentClass = SettingsActivity.class;
                 break;*/
-            default:
-                fragmentClass = MainActivity.class;
-        }
+                default:
+                    fragmentClass = MainActivity.class;
+            }
+            menuItem.setChecked(true);
+            mDrawer.closeDrawers();
+        } else fragmentClass = HomeFragment.class;
+
 
         try {
             fragment = (Fragment) fragmentClass.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // Insert the fragment by replacing any existing fragment
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
-        // Highlight the selected item has been done by NavigationView
-        menuItem.setChecked(true);
-        // Close the navigation drawer
-        mDrawer.closeDrawers();
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
@@ -152,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void poisFromJson(){
+    public void poisFromJson() {
         String title;
         String description;
         String info;
@@ -172,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
                 info = itemData.getString("info");
                 image = itemData.getString("image");
                 trail = itemData.getInt("trail");
-                coords = new LatLng(itemData.getJSONArray("coordinates").getDouble(1),itemData.getJSONArray("coordinates").getDouble(0));
+                coords = new LatLng(itemData.getJSONArray("coordinates").getDouble(1), itemData.getJSONArray("coordinates").getDouble(0));
 
                 Poi currentPoi = new Poi(title, description, info, image, trail, coords, i);
                 MapsActivity.poiList.add(currentPoi);
@@ -183,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void trailsFromJson(){
+    public void trailsFromJson() {
 
         try {
             JSONObject trail = new JSONObject(jsonFromAssets("trails.json"));
@@ -208,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
                 JSONArray rockArray = trailData.getJSONArray("rocks");
                 JSONArray coordsArray = trailData.getJSONArray("coordinates");
 
-                char[] rocks= new char[rockArray.length()];
+                char[] rocks = new char[rockArray.length()];
                 for (int j = 0; j < rockArray.length(); j++) {
                     rocks[j] = rockArray.getString(j).charAt(0);
                 }

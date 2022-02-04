@@ -19,22 +19,29 @@ import java.util.ArrayList;
 public class HomeFragment extends Fragment implements rvTrailAdapter.ItemClickListener{
 
     rvTrailAdapter trailAdapter;
+    ConstraintLayout myLayout;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.home_fragment, container, false);
-        ConstraintLayout myLayout = (ConstraintLayout) view.findViewById(R.id.home_fragment);
+        myLayout = (ConstraintLayout) view.findViewById(R.id.home_fragment);
         initRVs(myLayout, getContext());
         return view;
     }
 
     @Override
-    public void onItemClick(View view, int position) {
+    public void onTrailItemClick(View view, int position) {
 
         MapsActivity.trailToPass = MapsActivity.trailList.get(position).getId();
         Intent i = new Intent(getContext(), TrailInfoActivity.class);
         startActivity(i);
+    }
+
+    @Override
+    public void onResume() {
+        initRVs(myLayout, getContext());
+        super.onResume();
     }
 
     public void initRVs(View view, Context context){
@@ -47,7 +54,7 @@ public class HomeFragment extends Fragment implements rvTrailAdapter.ItemClickLi
             trailNames.add(MapsActivity.trailList.get(i).getName());
             trailImages[i] = MapsActivity.getResId(MapsActivity.trailList.get(i).getImage(),R.drawable.class);
         }
-        trailAdapter = new rvTrailAdapter(context, trailNames, trailImages);
+        trailAdapter = new rvTrailAdapter(context, trailNames, trailImages, null);
         trailAdapter.setClickListener(this);
         trailsRV.setAdapter(trailAdapter);
     }
