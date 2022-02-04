@@ -80,7 +80,6 @@ public class rvPoiAdapter extends RecyclerView.Adapter<rvPoiAdapter.ViewHolder> 
 
             poiFav.setOnClickListener(new View.OnClickListener(){
                 public void onClick(View v){
-                    AccountFragment.refresh();
                     mFav[getAdapterPosition()]=!mFav[getAdapterPosition()];
                     TrailInfoActivity.changePoiFav(poiTitle.getText().toString(), getAdapterPosition());
                 }
