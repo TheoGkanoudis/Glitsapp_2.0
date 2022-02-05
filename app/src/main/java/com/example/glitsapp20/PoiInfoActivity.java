@@ -2,22 +2,26 @@ package com.example.glitsapp20;
 
 import android.app.Activity;
 import android.content.Context;
+import android.media.MediaPlayer;
+import android.opengl.Visibility;
 import android.os.Bundle;
-import android.os.CpuUsageInfo;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RawRes;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.Map;
 
 public class PoiInfoActivity extends Activity {
 
     ConstraintLayout myLayout;
     rvPhotoAdapter photoAdapter;
+    MediaPlayer mPlayer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -26,6 +30,7 @@ public class PoiInfoActivity extends Activity {
         myLayout = (ConstraintLayout) findViewById(R.id.poi_info_activity);
         initPoiInfo(MapsActivity.getPoi(), myLayout);
         initRVs(myLayout, this, MapsActivity.getPoi());
+
     }
 
 
@@ -34,6 +39,10 @@ public class PoiInfoActivity extends Activity {
         String title = poi.getTitle();
         String info = poi.getInfo();
         boolean fav = poi.getFav();
+        String audio = poi.getImage();
+        int rawID = MapsActivity.getResId(audio, R.raw.class);
+
+        mPlayer = MediaPlayer.create(this, rawID);
 
         TextView tvTitle = view.findViewById(R.id.poi_title);
         if(title!=null){
@@ -47,7 +56,41 @@ public class PoiInfoActivity extends Activity {
 
         ImageView ivBack = view.findViewById(R.id.back_button);
         ivBack.setOnClickListener(new View.OnClickListener(){
+            @Override
             public void onClick(View v) {finish();}
+        });
+
+        ImageView ivPlayPause = view.findViewById(R.id.play_pause);
+        ivPlayPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mPlayer.isPlaying()){
+                    ivPlayPause.setImageResource(MapsActivity.getResId("play", R.drawable.class));
+                    mPlayer.pause();
+                }
+                else{
+                    ivPlayPause.setImageResource(MapsActivity.getResId("pause", R.drawable.class));
+                    mPlayer.start();
+                }
+            }
+        });
+
+        ImageView ivAudio = view.findViewById(R.id.speaker);
+        ivAudio.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if(!mPlayer.isPlaying()&&ivPlayPause.getVisibility()==View.GONE){
+                    ivAudio.setImageResource(MapsActivity.getResId("stop", R.drawable.class));
+                    mPlayer.start();
+                    ivPlayPause.setVisibility(View.VISIBLE);
+                }
+                else{
+                    ivAudio.setImageResource(MapsActivity.getResId("speaker", R.drawable.class));
+                    mPlayer.pause();
+                    mPlayer.seekTo(0);
+                    ivPlayPause.setVisibility(View.GONE);
+                }
+            }
         });
 
         int resID;
@@ -61,6 +104,7 @@ public class PoiInfoActivity extends Activity {
         ivFav.setImageResource(resID);
 
         ivFav.setOnClickListener(new View.OnClickListener(){
+            @Override
             public void onClick(View v){
                 poi.changeFav();
                 initPoiInfo(poi, view);

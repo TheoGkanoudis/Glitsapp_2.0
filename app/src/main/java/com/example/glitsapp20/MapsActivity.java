@@ -3,24 +3,31 @@ package com.example.glitsapp20;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 
-import android.opengl.Visibility;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -39,17 +46,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static android.view.View.GONE;
 
@@ -63,8 +67,8 @@ public class MapsActivity extends FragmentActivity
         GoogleMap.OnMarkerClickListener,
         GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMapLongClickListener,
-        ActivityCompat.OnRequestPermissionsResultCallback,
-        GoogleMap.OnMyLocationClickListener{
+        GoogleMap.OnMyLocationClickListener,
+        ActivityCompat.OnRequestPermissionsResultCallback {
 
     private GoogleMap mMap;
     private static Context mContext;
@@ -82,10 +86,38 @@ public class MapsActivity extends FragmentActivity
     private double minLocDistNew;
     private boolean success = false;
 
+    private String notificationPoi = "Κενό";
+    CountDownTimer countDownTimer;
+
+
     public static ArrayList<Poi> poiList = new ArrayList<>();
     public static ArrayList<Trail> trailList = new ArrayList<>();
     public static int trailToPass;
     public static int poiToPass;
+
+    Runnable checkProximity = new Runnable() {
+        @Override
+        public void run() {
+            if (getDeviceLocation()) {
+                for (Poi poi : poiList) {
+                    if (getDistance(poi.getCoords(), new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude())) < 0.0004) {
+
+                        poiToPass = poi.getId();
+
+                        Intent intent = new Intent(MapsActivity.this, PoiInfoActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        PendingIntent pendingIntent = PendingIntent.getActivity(MapsActivity.this, 0, intent, 0);
+
+                        notificationPoi = poi.getTitle();
+                        defBuilder.setContentIntent(pendingIntent);
+                        defBuilder.setContentText("Πλησιάζεις το: " + notificationPoi + "!\nΠάτα εδώ για τις σχετικές πληροφορίες!");
+                        defBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText("Πλησιάζεις το: " + notificationPoi + "!\nΠάτα εδώ για τις σχετικές πληροφορίες!"));
+                        showNotification();
+                    }
+                }
+            }
+        }
+    };
 
     ArrayList<Polyline> polylines = new ArrayList<>();
     ArrayList<Marker> markers = new ArrayList<>();
@@ -93,7 +125,6 @@ public class MapsActivity extends FragmentActivity
 
     LatLng apanoMeria = new LatLng(37.49913, 24.907264);
     LatLng cameraPosition = apanoMeria;
-    Location userLocation;
     ConstraintLayout mainLayout;
 
     // FINALS //
@@ -109,6 +140,15 @@ public class MapsActivity extends FragmentActivity
     //keys for storing activity state
     public static final String KEY_LOCATION = "location";
     public static final String KEY_CAMERA_POSITION = "camera_position";
+
+    // NOTIFICATIONS //
+    private static final String CHANNEL_ID = "def";
+    private static final int DEF_NOTIFICATION = 0;
+
+    NotificationCompat.Builder defBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.flag)
+            .setContentTitle("POI Alert")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
 
     // DEFAULT //
@@ -129,11 +169,12 @@ public class MapsActivity extends FragmentActivity
 
         newPosition = cameraPosition;
 
-        //for the Poi info popups
+        createNotificationChannel();
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
             return;
@@ -154,6 +195,7 @@ public class MapsActivity extends FragmentActivity
     @Override
     protected void onResumeFragments() {
         super.onResumeFragments();
+
         if (permissionDenied) {
             //TODO Permission was not granted, display error dialog.
             showMissingPermissionError();
@@ -169,6 +211,7 @@ public class MapsActivity extends FragmentActivity
         }
         super.onSaveInstanceState(outState);
     }
+
 
     // MAP //
     @Override
@@ -189,6 +232,9 @@ public class MapsActivity extends FragmentActivity
         drawMarkers();
         getDeviceLocation();
         setOnClickListeners();
+
+        usingCountDownTimer();
+
     }
 
     @Override
@@ -205,10 +251,9 @@ public class MapsActivity extends FragmentActivity
 
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
-        if(mMap.getCameraPosition().zoom<=14.5) {
+        if (mMap.getCameraPosition().zoom <= 14.5) {
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), (float) 14.5));
-        }
-        else{
+        } else {
             mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
         }
         poiToPass = Integer.parseInt(marker.getTitle());
@@ -230,11 +275,12 @@ public class MapsActivity extends FragmentActivity
     public boolean onMyLocationButtonClick() {
         locBut = false;
         if (locationPermissionsGranted && getDeviceLocation()) {
-            if(mMap.getCameraPosition().zoom > 14){
+            if (mMap.getCameraPosition().zoom > 14) {
                 //TODO - fix the power value maybe??
                 minLocDistNew = minLocDist / Math.pow(mMap.getCameraPosition().zoom - 13, 1.25);
+            } else {
+                minLocDistNew = minLocDist;
             }
-            else{minLocDistNew=minLocDist;}
             if (getDistance(userPosition, newPosition) < minLocDistNew) {
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(apanoMeria, 13));
                 locBut = true;
@@ -260,6 +306,7 @@ public class MapsActivity extends FragmentActivity
         PoiPopup.refreshPopup(mainLayout);
     }
 
+
     // LOCATION //
 
     @SuppressLint("MissingPermission")
@@ -277,10 +324,6 @@ public class MapsActivity extends FragmentActivity
     }
 
     private boolean getDeviceLocation() {
-        /*
-         * Get the best and most recent location of the device, which may be null in rare
-         * cases when a location is not available.
-         */
         try {
             if (locationPermissionsGranted) {
                 @SuppressLint("MissingPermission") Task<Location> locationResult = fusedLocationClient.getLastLocation();
@@ -333,7 +376,7 @@ public class MapsActivity extends FragmentActivity
         int currentTrail = 0;
         int counter = 0;
         markersPerTrail = new int[trailList.size()];
-        for(int i = 0; i< poiList.size(); i++) {
+        for (int i = 0; i < poiList.size(); i++) {
             marker = mMap.addMarker(new MarkerOptions()
                     .alpha((float) 0.5)
                     .position(poiList.get(i).getCoords())
@@ -342,14 +385,14 @@ public class MapsActivity extends FragmentActivity
             marker.setVisible(false);
             markers.add(marker);
 
-            if(poiList.get(i).getTrail()!=currentTrail){
-                markersPerTrail[currentTrail]=counter;
+            if (poiList.get(i).getTrail() != currentTrail) {
+                markersPerTrail[currentTrail] = counter;
                 currentTrail++;
                 counter = 0;
             }
             counter++;
         }
-        markersPerTrail[currentTrail]=counter;
+        markersPerTrail[currentTrail] = counter;
         visibleMarkers = new boolean[markers.size()];
     }
 
@@ -389,14 +432,12 @@ public class MapsActivity extends FragmentActivity
             }
             cameraToTrail();
             TrailPopup.showTrailPopup(trailSelected, mainLayout);
-        }
-        else {
-            if(mainLayout.findViewById(R.id.poi_popup).getVisibility()== GONE) {
+        } else {
+            if (mainLayout.findViewById(R.id.poi_popup).getVisibility() == GONE) {
                 polyline.setWidth(PATH_UNSELECTED_W);
                 TrailPopup.hideTrailPopup(mainLayout);
                 trailSelected = -1;
-            }
-            else {
+            } else {
                 cameraToTrail();
                 markersAlpha();
                 PoiPopup.hidePoiPopup(mainLayout);
@@ -431,8 +472,8 @@ public class MapsActivity extends FragmentActivity
         double lng1 = Math.min(temp.get(0).longitude, temp.get(temp.size() - 1).longitude);
         double lat2 = Math.max(temp.get(0).latitude, temp.get(temp.size() - 1).latitude);
         double lng2 = Math.max(temp.get(0).longitude, temp.get(temp.size() - 1).longitude);
-        LatLng sw = new LatLng(lat1,lng1);
-        LatLng ne = new LatLng(lat2,lng2);
+        LatLng sw = new LatLng(lat1, lng1);
+        LatLng ne = new LatLng(lat2, lng2);
         LatLngBounds bounds = new LatLngBounds(sw, ne);
         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
     }
@@ -444,13 +485,13 @@ public class MapsActivity extends FragmentActivity
                 .newInstance(true).show(getSupportFragmentManager(), "dialog");
     }
 
-    private double getDistance(LatLng a, LatLng b){
-        return Math.hypot(Math.abs(a.longitude-b.longitude),Math.abs(a.latitude-b.latitude));
+    private double getDistance(LatLng a, LatLng b) {
+        return Math.hypot(Math.abs(a.longitude - b.longitude), Math.abs(a.latitude - b.latitude));
     }
 
     private void updateLocateIcon() {
         newPosition = mMap.getCameraPosition().target;
-        if(!locationPermissionsGranted || !getDeviceLocation()) {
+        if (!locationPermissionsGranted || !getDeviceLocation()) {
             userPosition = newPosition;
         }
     }
@@ -462,7 +503,7 @@ public class MapsActivity extends FragmentActivity
         Intent ti = new Intent(mContext, TrailInfoActivity.class);
         View trailPopup = mainLayout.findViewById(R.id.trail_popup);
 
-        trailPopup.setOnClickListener(new View.OnClickListener(){
+        trailPopup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 trailToPass = trailSelected;
@@ -473,7 +514,7 @@ public class MapsActivity extends FragmentActivity
         Intent pi = new Intent(mContext, PoiInfoActivity.class);
         View poiPopup = mainLayout.findViewById(R.id.poi_popup);
 
-        poiPopup.setOnClickListener(new View.OnClickListener(){
+        poiPopup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(pi);
@@ -481,7 +522,7 @@ public class MapsActivity extends FragmentActivity
         });
 
         ImageView home = mainLayout.findViewById(R.id.home_icon);
-        home.setOnClickListener(new View.OnClickListener(){
+        home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
@@ -489,26 +530,48 @@ public class MapsActivity extends FragmentActivity
         });
     }
 
+
+    // NOTIFICATIONS //
+
+    private void showNotification() {
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        defBuilder.setSound(alarmSound);
+        notificationManager.notify(DEF_NOTIFICATION, defBuilder.build());
+    }
+
+    private void createNotificationChannel() {
+        CharSequence name = getString(R.string.channel_name);
+        String description = getString(R.string.channel_description);
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+        channel.setDescription(description);
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+    }
+
     // MISC //
 
-    public static Trail getTrail(){
+    public static Trail getTrail() {
         return trailList.get(trailToPass);
     }
 
-    public static Poi getPoi() {return  poiList.get(poiToPass);}
+    public static Poi getPoi() {
+        return poiList.get(poiToPass);
+    }
 
-    public static ArrayList<String> getPoiTitles(Trail trail){
+    public static ArrayList<String> getPoiTitles(Trail trail) {
         ArrayList<String> titles = new ArrayList<>();
-        for(int i = 0; i<poiList.size(); i++){
-            if(poiList.get(i).getTrail()==trail.getId()){
+        for (int i = 0; i < poiList.size(); i++) {
+            if (poiList.get(i).getTrail() == trail.getId()) {
                 titles.add(poiList.get(i).getTitle());
             }
         }
         return titles;
     }
 
-    public void markersAlpha(){
-        for (Marker marker:markers) {
+    public void markersAlpha() {
+        for (Marker marker : markers) {
             marker.setAlpha(DEFAULT_MARKER_ALPHA);
         }
     }
@@ -524,4 +587,16 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
+    public void usingCountDownTimer() {
+        countDownTimer = new CountDownTimer(Long.MAX_VALUE, 5000) {
+
+            public void onTick(long millisUntilFinished) {
+                checkProximity.run();
+            }
+
+            public void onFinish() {
+                start();
+            }
+        }.start();
+    }
 }
