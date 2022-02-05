@@ -29,6 +29,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -38,12 +39,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.maps.android.data.Style;
 
 
 import java.lang.reflect.Field;
@@ -227,12 +230,12 @@ public class MapsActivity extends FragmentActivity
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
 
+
         enableMyLocation();
+        getDeviceLocation();
         drawPaths();
         drawMarkers();
-        getDeviceLocation();
         setOnClickListeners();
-
         usingCountDownTimer();
 
     }
@@ -502,7 +505,6 @@ public class MapsActivity extends FragmentActivity
 
         Intent ti = new Intent(mContext, TrailInfoActivity.class);
         View trailPopup = mainLayout.findViewById(R.id.trail_popup);
-
         trailPopup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -513,7 +515,6 @@ public class MapsActivity extends FragmentActivity
 
         Intent pi = new Intent(mContext, PoiInfoActivity.class);
         View poiPopup = mainLayout.findViewById(R.id.poi_popup);
-
         poiPopup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -528,6 +529,18 @@ public class MapsActivity extends FragmentActivity
                 finish();
             }
         });
+
+        ImageView layers = mainLayout.findViewById(R.id.icon_layers);
+        layers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mMap.getMapType()==GoogleMap.MAP_TYPE_TERRAIN) {
+                    mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                }
+                else mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+            }
+        });
+
     }
 
 
