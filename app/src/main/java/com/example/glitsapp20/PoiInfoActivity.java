@@ -2,7 +2,9 @@ package com.example.glitsapp20;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.opengl.Visibility;
 import android.os.Bundle;
 import android.view.View;
@@ -41,6 +43,21 @@ public class PoiInfoActivity extends Activity {
         boolean fav = poi.getFav();
         String audio = poi.getImage();
         int rawID = MapsActivity.getResId(audio, R.raw.class);
+
+        ImageView ivAR = view.findViewById(R.id.poi_ar);
+        if(poi.getId()==2){
+            ivAR.setVisibility(View.VISIBLE);
+            ivAR.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String url = "https://project1.syros.aegean.gr/~dpsd17030/toServer/GeoObj/spitaki/";
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(url));
+                    startActivity(i);
+                }
+            });
+        }
+        else ivAR.setVisibility(View.GONE);
 
         mPlayer = MediaPlayer.create(this, rawID);
 

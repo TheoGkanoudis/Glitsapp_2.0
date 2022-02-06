@@ -14,7 +14,7 @@ import java.util.List;
 
 public class rvTrailAdapter extends RecyclerView.Adapter<rvTrailAdapter.ViewHolder> {
 
-        private List<String> mTrails;
+    private List<String> mTrails;
     private LayoutInflater mInflater;
     private boolean[] mFavs;
     private int[] mResIDs;
@@ -31,7 +31,7 @@ public class rvTrailAdapter extends RecyclerView.Adapter<rvTrailAdapter.ViewHold
     @Override
     public rvTrailAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
-        if(mFavs==null)view = mInflater.inflate(R.layout.trail_item, parent, false);
+        if (mFavs == null) view = mInflater.inflate(R.layout.trail_item, parent, false);
         else view = mInflater.inflate(R.layout.fav_trail_item, parent, false);
         return new ViewHolder(view);
     }
@@ -43,9 +43,9 @@ public class rvTrailAdapter extends RecyclerView.Adapter<rvTrailAdapter.ViewHold
         holder.trailText.setText(text);
         int image = mResIDs[position];
         holder.trailImage.setImageResource(image);
-        if(mFavs!=null) {
+        if (mFavs != null) {
             boolean fav = mFavs[position];
-            holder.trailFav.setImageResource(fav?R.drawable.fav_filled:R.drawable.fav_empty);
+            holder.trailFav.setImageResource(fav ? R.drawable.fav_filled : R.drawable.fav_empty);
         }
     }
 
@@ -56,7 +56,7 @@ public class rvTrailAdapter extends RecyclerView.Adapter<rvTrailAdapter.ViewHold
     }
 
     // stores and recycles views as they are scrolled off screen
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView trailText;
         ImageView trailImage;
         ImageView trailFav;
@@ -65,25 +65,25 @@ public class rvTrailAdapter extends RecyclerView.Adapter<rvTrailAdapter.ViewHold
             super(itemView);
             trailText = itemView.findViewById(R.id.trail_name);
             trailImage = itemView.findViewById(R.id.trail_image);
-            if(mFavs!=null) {
+            if (mFavs != null) {
                 trailFav = itemView.findViewById(R.id.trail_fav);
                 trailFav.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mTrails.remove(getAdapterPosition());
-                        for(int i = getAdapterPosition(); i<mTrails.size(); i++){
-                            mFavs[i]=mFavs[i+1];
-                            mResIDs[i]=mResIDs[i+1];
+                        mTrails.remove(getAbsoluteAdapterPosition());
+                        for (int i = getAbsoluteAdapterPosition(); i < mTrails.size(); i++) {
+                            mFavs[i] = mFavs[i + 1];
+                            mResIDs[i] = mResIDs[i + 1];
                         }
                         int[] newResIDs = new int[mTrails.size()];
                         boolean[] newFavs = new boolean[mTrails.size()];
-                        for(int i = 0; i<mTrails.size(); i++){
-                            newResIDs[i]=mResIDs[i];
-                            newFavs[i]=mFavs[i];
+                        for (int i = 0; i < mTrails.size(); i++) {
+                            newResIDs[i] = mResIDs[i];
+                            newFavs[i] = mFavs[i];
                         }
-                        mResIDs=newResIDs;
-                        mFavs=newFavs;
-                        AccountFragment.changeTrailFav(trailText.getText().toString(), getAdapterPosition());
+                        mResIDs = newResIDs;
+                        mFavs = newFavs;
+                        AccountFragment.changeTrailFav(trailText.getText().toString(), getAbsoluteAdapterPosition());
                     }
                 });
             }
@@ -92,15 +92,15 @@ public class rvTrailAdapter extends RecyclerView.Adapter<rvTrailAdapter.ViewHold
 
         @Override
         public void onClick(View view) {
-            if(mClickListener!=null) mClickListener.onTrailItemClick(view, getAdapterPosition());
+            if (mClickListener != null) mClickListener.onTrailItemClick(view, getAbsoluteAdapterPosition());
         }
     }
 
-    void setClickListener(ItemClickListener itemClickListener){
+    void setClickListener(ItemClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
     }
 
-    public interface ItemClickListener{
+    public interface ItemClickListener {
         void onTrailItemClick(View view, int position);
     }
 

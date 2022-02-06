@@ -27,8 +27,6 @@
                 android:background="@drawable/tapa"/>
 
             <LinearLayout
-                android:layout_marginHorizontal="15dp"
-                android:layout_marginVertical="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
@@ -39,6 +37,8 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="15dp"
                         android:id="@+id/poi_title"
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
@@ -51,25 +51,27 @@
 
                     <ImageView
                         android:id="@+id/poi_fav"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginEnd="5dp"
-                        android:background="@drawable/fav_empty"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:layout_alignParentEnd="true"
-                        android:layout_gravity="end"/>
+                        android:layout_gravity="end"
+                        android:layout_marginEnd="5dp"
+                        android:padding="10dp"
+                        android:paddingEnd="5dp"
+                        android:src="@drawable/fav_empty" />
 
                 </RelativeLayout>
 
 
                 <TextView
+                    android:layout_marginHorizontal="10dp"
                     android:id="@+id/poi_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLines="3"
+                    android:maxLines="4"
                     android:text="@string/lorem_ipsum"
                     android:textColor="@android:color/black"
                     android:textSize="15sp"
-                    android:layout_marginTop="10dp"
                     android:ellipsize="end"/>
 
             </LinearLayout>

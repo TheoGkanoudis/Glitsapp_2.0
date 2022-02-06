@@ -37,23 +37,23 @@
         android:layout_marginTop="-25dp"/>
 
     <ImageView
+        android:layout_marginStart="5dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/trail_popup"
         android:id="@+id/home_icon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="10dp"
-        android:padding="5dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:padding="12dp"
         android:src="@drawable/home"/>
 
     <ImageView
+        android:layout_marginStart="5dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/home_icon"
         android:id="@+id/icon_layers"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="10dp"
-        android:padding="7dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:padding="14dp"
         android:src="@drawable/layers"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
