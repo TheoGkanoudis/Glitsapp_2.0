@@ -3,19 +3,15 @@ package com.example.glitsapp20;
 import android.app.Activity;
 import android.content.Context;
 import android.media.MediaPlayer;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RawRes;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.Map;
 
 public class PoiInfoActivity extends Activity {
 
@@ -30,7 +26,7 @@ public class PoiInfoActivity extends Activity {
         myLayout = (ConstraintLayout) findViewById(R.id.poi_info_activity);
         initPoiInfo(MapsActivity.getPoi(), myLayout);
         initRVs(myLayout, this, MapsActivity.getPoi());
-
+        MapsActivity.checkVisited();
     }
 
 

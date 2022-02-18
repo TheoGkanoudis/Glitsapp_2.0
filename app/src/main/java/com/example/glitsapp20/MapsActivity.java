@@ -1,14 +1,5 @@
 package com.example.glitsapp20;
 
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
-
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
@@ -18,16 +9,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -45,15 +41,10 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static android.view.View.GONE;
 
@@ -85,13 +76,15 @@ public class MapsActivity extends FragmentActivity
     private double minLocDist = 0.01;
     private double minLocDistNew;
     private boolean success = false;
+    private boolean closeToPoi = false;
 
-    private String notificationPoi = "Κενό";
+    public static String notificationPoi = "Κενό";
     CountDownTimer countDownTimer;
 
 
     public static ArrayList<Poi> poiList = new ArrayList<>();
     public static ArrayList<Trail> trailList = new ArrayList<>();
+    public static ArrayList<String> visitedPois = new ArrayList<>();
     public static int trailToPass;
     public static int poiToPass;
 
@@ -99,9 +92,12 @@ public class MapsActivity extends FragmentActivity
         @Override
         public void run() {
             if (getDeviceLocation()) {
+                closeToPoi = false;
                 for (Poi poi : poiList) {
-                    if (getDistance(poi.getCoords(), new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude())) < 0.0004) {
+                    if (getDistance(poi.getCoords(), new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude())) < 0.0004&&
+                    notificationPoi!=poi.getTitle()) {
 
+                        closeToPoi = true;
                         poiToPass = poi.getId();
 
                         Intent intent = new Intent(MapsActivity.this, PoiInfoActivity.class);
@@ -598,5 +594,9 @@ public class MapsActivity extends FragmentActivity
                 start();
             }
         }.start();
+    }
+
+    public static void checkVisited(){
+        if(getPoi().getTitle()==notificationPoi)visitedPois.add(notificationPoi);
     }
 }
