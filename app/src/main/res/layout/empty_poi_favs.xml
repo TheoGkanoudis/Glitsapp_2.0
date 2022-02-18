@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="20dp">
+
+    <TextView
+        android:paddingHorizontal="40dp"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:minLines="3"
+        android:background="?android:fillColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Εδώ θα φαίνονται τα αγαπημένα\nσου σημεία ενδιαφέροντος!"
+        android:textColor="@color/black"/>
+
+</androidx.cardview.widget.CardView>

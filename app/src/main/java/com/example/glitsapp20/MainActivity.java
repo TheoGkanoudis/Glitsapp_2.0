@@ -105,9 +105,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.account:
                 fragmentClass = AccountFragment.class;
                 break;
-            /*case R.id.settings:
-                fragmentClass = SettingsActivity.class;
-                break;*/
+            case R.id.settings:
+                fragmentClass = SettingsFragment.class;
+                break;
                 default:
                     fragmentClass = MainActivity.class;
             }

@@ -1,7 +1,5 @@
 package com.example.glitsapp20;
 
-import static com.example.glitsapp20.TrailInfoActivity.poiAdapter;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,10 +17,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class AccountFragment extends Fragment implements rvTrailAdapter.ItemClickListener, rvPoiAdapter.ItemClickListener {
+public class AccountFragment extends Fragment implements rvTrailAdapter.ItemClickListener, rvFavPoiAdapter.ItemClickListener {
 
     static rvTrailAdapter trailAdapter;
-    ConstraintLayout myLayout;
+    static ConstraintLayout myLayout;
+    static rvFavPoiAdapter favPoiAdapter;
+
 
     @Nullable
     @Override
@@ -83,12 +83,14 @@ public class AccountFragment extends Fragment implements rvTrailAdapter.ItemClic
                 counter++;
             }
         }
+        if(counter!=0) view.findViewById(R.id.pois_empty).setVisibility(View.GONE);
+        else view.findViewById(R.id.pois_empty).setVisibility(View.VISIBLE);
 
         RecyclerView poiRV = view.findViewById(R.id.rv_pois);
         poiRV.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
-        poiAdapter = new rvPoiAdapter(context, poiTitles, poiImages, poiInfo, poiFav);
-        poiAdapter.setClickListener(this);
-        poiRV.setAdapter(poiAdapter);
+        favPoiAdapter = new rvFavPoiAdapter(context, poiTitles, poiImages, poiInfo, poiFav);
+        favPoiAdapter.setClickListener(this);
+        poiRV.setAdapter(favPoiAdapter);
 
         //for the trail rv
         ArrayList<String> trailNames = new ArrayList<>();
@@ -106,27 +108,41 @@ public class AccountFragment extends Fragment implements rvTrailAdapter.ItemClic
                 trailFav[counter] = trail.getFav();
                 counter ++;
             }
-
         }
+        if(counter!=0) view.findViewById(R.id.trails_empty).setVisibility(View.GONE);
+        else view.findViewById(R.id.trails_empty).setVisibility(View.VISIBLE);
 
         RecyclerView trailsRV = view.findViewById(R.id.rv_trails);
         trailsRV.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         trailAdapter = new rvTrailAdapter(context, trailNames, trailImages, trailFav);
         trailAdapter.setClickListener(this);
         trailsRV.setAdapter(trailAdapter);
-
-
     }
 
     public static void changeTrailFav(String trailName, int position) {
+        boolean empty = true;
         for (Trail trail : MapsActivity.trailList) {
             if (trail.getName().equals(trailName)) {
                 if(trail.getFav())trailAdapter.notifyItemRemoved(position);
                 else trailAdapter.notifyItemChanged(position);
                 trail.changeFav();
-                break;
             }
+            else if(trail.getFav())empty=false;
         }
+        if(empty)myLayout.findViewById(R.id.trails_empty).setVisibility(View.VISIBLE);
+    }
+
+    public static void changeFavPoiFav(String poiTitle, int position){
+        boolean empty = true;
+        for (Poi poi : MapsActivity.poiList) {
+            if(poi.getTitle()==poiTitle){
+                favPoiAdapter.notifyItemRemoved(position);
+                poi.changeFav();
+            }
+            else if(poi.getFav()) empty = false;
+
+        }
+        if(empty)myLayout.findViewById(R.id.pois_empty).setVisibility(View.VISIBLE);
     }
 
 }

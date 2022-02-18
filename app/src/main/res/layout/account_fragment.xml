@@ -84,12 +84,16 @@
                                     android:textSize="18sp"
                                     android:textStyle="bold"/>
 
-                                <LinearLayout
+                                <RelativeLayout
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginBottom="5dp"
                                     android:orientation="horizontal">
 
+                                    <include
+                                        android:visibility="visible"
+                                        layout="@layout/empty_trail_favs"
+                                        android:id="@+id/trails_empty"/>
 
                                     <androidx.recyclerview.widget.RecyclerView
                                         android:id="@+id/rv_trails"
@@ -99,7 +103,7 @@
                                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 
-                                </LinearLayout>
+                                </RelativeLayout>
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -113,6 +117,11 @@
                                 <RelativeLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content">
+
+                                    <include
+                                        android:visibility="visible"
+                                        layout="@layout/empty_poi_favs"
+                                        android:id="@+id/pois_empty"/>
 
                                     <androidx.recyclerview.widget.RecyclerView
                                         android:id="@+id/rv_pois"
