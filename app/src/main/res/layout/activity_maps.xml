@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/main_layout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="bottom"
-    android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="vertical">
 
 
     <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
-        map:layout_constraintTop_toTopOf="parent"
-        map:layout_constraintStart_toStartOf="parent"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        map:layout_constraintStart_toStartOf="parent"
+        map:layout_constraintTop_toTopOf="parent"
         tools:context=".MapsActivity" />
 
 
@@ -23,37 +23,44 @@
         layout="@layout/poi_popup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="-25dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="-25dp"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <include
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         android:id="@+id/trail_popup"
         layout="@layout/trail_popup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="-25dp"/>
+        android:layout_marginTop="-25dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:layout_marginStart="5dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/trail_popup"
         android:id="@+id/home_icon"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:padding="12dp"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="13dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="9dp"
+        android:tint="#6E6E6E"
+        android:background="@drawable/button_bkg"
         android:src="@drawable/home"/>
 
     <ImageView
-        android:layout_marginStart="5dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/home_icon"
         android:id="@+id/icon_layers"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:padding="14dp"
-        android:src="@drawable/layers"/>
+        android:background="@drawable/button_bkg"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="13dp"
+        android:padding="9dp"
+        android:src="@drawable/layers"
+        android:tint="#6E6E6E"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/home_icon"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
